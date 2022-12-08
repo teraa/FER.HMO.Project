@@ -8,16 +8,18 @@ public static class InstanceLoader
             .Select(x => x.Split(" ", StringSplitOptions.RemoveEmptyEntries))
             .ToArray();
 
-        const int i1 = 2, i2 = 7, i3 = 8;
-        var vehicles = int.Parse(lines[i1][0]);
-        var capacity = int.Parse(lines[i1][1]);
+        int i = 2;
+        var vehicles = int.Parse(lines[i][0]);
+        var capacity = int.Parse(lines[i][1]);
+
+        i = 7;
         var startingPoint = new Point(
-            int.Parse(lines[i2][1]),
-            int.Parse(lines[i2][2]));
-        var dueDate = int.Parse(lines[i2][5]);
+            int.Parse(lines[i][1]),
+            int.Parse(lines[i][2]));
+        var dueDate = int.Parse(lines[i][5]);
 
         var customers = new List<Customer>();
-        for (int i = i3; i < lines.Length; i++)
+        for (i = 8; i < lines.Length; i++)
         {
             var parts = lines[i]
                 .Select(int.Parse)
