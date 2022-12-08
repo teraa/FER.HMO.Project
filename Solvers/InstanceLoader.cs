@@ -8,16 +8,16 @@ public static class InstanceLoader
             .Select(x => x.Split(" ", StringSplitOptions.RemoveEmptyEntries))
             .ToArray();
 
-        const int l1 = 2, l2 = 7, l3 = 8;
-        var vehicles = int.Parse(lines[l1][0]);
-        var capacity = int.Parse(lines[l1][1]);
-        var startingPosition = new Position(
-            int.Parse(lines[l2][1]),
-            int.Parse(lines[l2][2]));
-        var dueDate = int.Parse(lines[l2][5]);
+        const int i1 = 2, i2 = 7, i3 = 8;
+        var vehicles = int.Parse(lines[i1][0]);
+        var capacity = int.Parse(lines[i1][1]);
+        var startingPoint = new Point(
+            int.Parse(lines[i2][1]),
+            int.Parse(lines[i2][2]));
+        var dueDate = int.Parse(lines[i2][5]);
 
         var customers = new List<Customer>();
-        for (int i = l3; i < lines.Length; i++)
+        for (int i = i3; i < lines.Length; i++)
         {
             var parts = lines[i]
                 .Select(int.Parse)
@@ -26,7 +26,7 @@ public static class InstanceLoader
             int part = 0;
             var customer = new Customer(
                 Id: parts[part++],
-                Position: new Position(
+                Point: new Point(
                     X: parts[part++],
                     Y: parts[part++]),
                 Demand: parts[part++],
@@ -40,7 +40,7 @@ public static class InstanceLoader
         return new Instance(
             vehicles,
             capacity,
-            startingPosition,
+            startingPoint,
             dueDate,
             customers);
     }

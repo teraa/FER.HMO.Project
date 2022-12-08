@@ -3,16 +3,16 @@
 public record Instance(
     int Vehicles,
     int Capacity,
-    Position StartingPosition,
+    Point StartingPoint,
     int DueDate,
     IReadOnlyList<Customer> Customers);
 
 public record Customer(
     int Id,
-    Position Position,
+    Point Point,
     int Demand,
     int ReadyTime,
     int DueDate,
     int ServiceTime);
 
-public record Position(int X, int Y);
+public record Point(int X, int Y);
