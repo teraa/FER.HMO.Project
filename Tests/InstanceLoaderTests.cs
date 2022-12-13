@@ -14,8 +14,8 @@ public class InstanceLoaderTests
 
         instance.Vehicles.Should().Be(vehicles);
         instance.Capacity.Should().Be(capacity);
-        instance.StartingPoint.X.Should().Be(x);
-        instance.StartingPoint.Y.Should().Be(y);
+        instance.StartingPosition.X.Should().Be(x);
+        instance.StartingPosition.Y.Should().Be(y);
         instance.DueDate.Should().Be(dueDate);
         instance.Customers.Count.Should().Be(customers);
     }

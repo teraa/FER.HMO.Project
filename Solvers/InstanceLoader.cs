@@ -1,4 +1,6 @@
-﻿namespace Solvers;
+﻿using System.Numerics;
+
+namespace Solvers;
 
 public static class InstanceLoader
 {
@@ -13,9 +15,9 @@ public static class InstanceLoader
         var capacity = int.Parse(lines[i][1]);
 
         i = 7;
-        var startingPoint = new Point(
-            int.Parse(lines[i][1]),
-            int.Parse(lines[i][2]));
+        var startingPosition = new Vector2(
+            x: int.Parse(lines[i][1]),
+            y: int.Parse(lines[i][2]));
         var dueDate = int.Parse(lines[i][5]);
 
         var customers = new List<Customer>();
@@ -28,9 +30,9 @@ public static class InstanceLoader
             int part = 0;
             var customer = new Customer(
                 Id: parts[part++],
-                Point: new Point(
-                    X: parts[part++],
-                    Y: parts[part++]),
+                Position: new Vector2(
+                    x: parts[part++],
+                    y: parts[part++]),
                 Demand: parts[part++],
                 ReadyTime: parts[part++],
                 DueDate: parts[part++],
@@ -42,7 +44,7 @@ public static class InstanceLoader
         return new Instance(
             vehicles,
             capacity,
-            startingPoint,
+            startingPosition,
             dueDate,
             customers);
     }

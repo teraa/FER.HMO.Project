@@ -1,15 +1,17 @@
-﻿namespace Solvers;
+﻿using System.Numerics;
+
+namespace Solvers;
 
 public record Instance(
     int Vehicles,
     int Capacity,
-    Point StartingPoint,
+    Vector2 StartingPosition,
     int DueDate,
     IReadOnlyList<Customer> Customers);
 
 public record Customer(
     int Id,
-    Point Point,
+    Vector2 Position,
     int Demand,
     int ReadyTime,
     int DueDate,
