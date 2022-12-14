@@ -14,14 +14,8 @@ public static class InstanceLoader
         var vehicles = int.Parse(lines[i][0]);
         var capacity = int.Parse(lines[i][1]);
 
-        i = 7;
-        var startingPosition = new Vector2(
-            x: int.Parse(lines[i][1]),
-            y: int.Parse(lines[i][2]));
-        var dueDate = int.Parse(lines[i][5]);
-
         var customers = new List<Customer>();
-        for (i = 8; i < lines.Length; i++)
+        for (i = 7; i < lines.Length; i++)
         {
             var parts = lines[i]
                 .Select(int.Parse)
@@ -41,11 +35,13 @@ public static class InstanceLoader
             customers.Add(customer);
         }
 
+        var depot = customers[0];
+        customers.Remove(depot);
+
         return new Instance(
             vehicles,
             capacity,
-            startingPosition,
-            dueDate,
+            depot,
             customers);
     }
 }

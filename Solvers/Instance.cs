@@ -5,8 +5,7 @@ namespace Solvers;
 public record Instance(
     int Vehicles,
     int Capacity,
-    Vector2 StartingPosition,
-    int DueDate,
+    Customer Depot,
     IReadOnlyList<Customer> Customers);
 
 public record Customer(
