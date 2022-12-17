@@ -3,8 +3,9 @@ using System.Text;
 
 namespace Solvers;
 
-public record Solution(IReadOnlyList<Route> Routes)
+public class Solution
 {
+    public List<Route> Routes { get; } = new();
     public float Distance => Routes.Sum(x => x.Distance);
     public override string ToString()
     {
