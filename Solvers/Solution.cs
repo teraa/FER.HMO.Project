@@ -1,10 +1,25 @@
-﻿using System.Diagnostics;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Text;
 
 namespace Solvers;
 
-public record Solution(IReadOnlyList<Route> Routes);
+public record Solution(IReadOnlyList<Route> Routes)
+{
+    public float Distance => Routes.Sum(x => x.Distance);
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine(Routes.Count.ToString());
+
+        int i = 0;
+        foreach (var route in Routes)
+            sb.AppendLine($"{++i}: {route}");
+
+        sb.AppendLine(Distance.ToString("F"));
+
+        return sb.ToString();
+    }
+};
 
 public class Route
 {
@@ -64,6 +79,9 @@ public class Route
 
         _stops.Add(new Stop(customer, time));
     }
+
+    public override string ToString()
+        => string.Join("->", _stops.Select(x => $"{x.Customer.Id}({x.ServiceStartedAt})"));
 }
 
 public record Stop(Customer Customer, int ServiceStartedAt)
