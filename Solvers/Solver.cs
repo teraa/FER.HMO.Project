@@ -9,6 +9,6 @@ public class Solver : ISolver
 {
     public Solution Solve(Instance instance)
     {
-        throw new NotImplementedException();
+        return new GreedySolver().Solve(instance);
     }
 }
