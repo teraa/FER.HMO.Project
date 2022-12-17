@@ -16,7 +16,7 @@ public class InstanceLoaderTests
         instance.Capacity.Should().Be(capacity);
         instance.Depot.Position.X.Should().Be(x);
         instance.Depot.Position.Y.Should().Be(y);
-        instance.Depot.DueDate.Should().Be(dueDate);
+        instance.Depot.DueTime.Should().Be(dueDate);
         instance.Customers.Count.Should().Be(customers);
     }
 }

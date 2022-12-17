@@ -29,7 +29,7 @@ public static class InstanceLoader
                     y: parts[part++]),
                 Demand: parts[part++],
                 ReadyTime: parts[part++],
-                DueDate: parts[part++],
+                DueTime: parts[part++],
                 ServiceTime: parts[part]);
 
             customers.Add(customer);

@@ -13,5 +13,5 @@ public record Customer(
     Vector2 Position,
     int Demand,
     int ReadyTime,
-    int DueDate,
+    int DueTime,
     int ServiceTime);
