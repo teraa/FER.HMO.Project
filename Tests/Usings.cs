@@ -1,3 +1,4 @@
-global using Xunit;
-global using Solvers;
 global using FluentAssertions;
+global using FluentAssertions.Execution;
+global using Solvers;
+global using Xunit;
