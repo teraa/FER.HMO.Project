@@ -15,5 +15,3 @@ public record Customer(
     int ReadyTime,
     int DueDate,
     int ServiceTime);
-
-public record Point(int X, int Y);
