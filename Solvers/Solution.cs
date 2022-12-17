@@ -50,9 +50,9 @@ public class Route
             func: (acc, current) => (acc.Distance + Vector2.Distance(acc.Previous, current), current),
             resultSelector: acc => acc.Distance);
 
-    public bool CanAdd(Customer customer, out int time)
+    public bool CanAdd(Customer customer, out int serviceStartTime)
     {
-        time = 0;
+        serviceStartTime = 0;
 
         // Capacity
         if (Demand + customer.Demand > Capacity)
@@ -60,25 +60,25 @@ public class Route
 
         var distance = Vector2.Distance(Position, customer.Position);
         var travelTime = (int) Math.Ceiling(distance);
-        time = _stops.Last().ServiceCompletedAt + travelTime;
+        serviceStartTime = _stops.Last().ServiceCompletedAt + travelTime;
 
         // Time
-        if (time > customer.DueTime)
+        if (serviceStartTime > customer.DueTime)
             return false;
 
         // Wait if early
-        if (time < customer.ReadyTime)
-            time = customer.ReadyTime;
+        if (serviceStartTime < customer.ReadyTime)
+            serviceStartTime = customer.ReadyTime;
 
         return true;
     }
 
     public void Add(Customer customer)
     {
-        if (!CanAdd(customer, out var time))
+        if (!CanAdd(customer, out var serviceStartTime))
             throw new InvalidOperationException();
 
-        _stops.Add(new Stop(customer, time));
+        _stops.Add(new Stop(customer, serviceStartTime));
     }
 
     public override string ToString()
