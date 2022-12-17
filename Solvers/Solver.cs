@@ -1,4 +1,4 @@
-﻿namespace Solvers;
+namespace Solvers;
 
 public interface ISolver
 {
