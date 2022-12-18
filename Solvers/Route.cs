@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace Solvers;
@@ -13,6 +14,15 @@ public class Route
         {
             new(depot, 0),
         };
+    }
+
+    private Route(List<Stop> stops, int capacity)
+    {
+        if (stops.Count < 1)
+            throw new ArgumentException("Must include at least one stop (depot)", nameof(stops));
+
+        _stops = stops;
+        Capacity = capacity;
     }
 
     public int Capacity { get; }
@@ -81,6 +91,39 @@ public class Route
     {
         if (!TryAdd(customer))
             throw new InvalidOperationException();
+    }
+
+    public bool TryInsert(Customer customer, int index, [NotNullWhen(true)] out Route? newRoute)
+    {
+        // exclude depot
+        if (index < 1 || index > _stops.Count - 1)
+            throw new ArgumentOutOfRangeException(nameof(index));
+
+        newRoute = null;
+        var route = new Route(_stops.Take(index).ToList(), Capacity);
+
+        if (!route.TryAdd(customer))
+            return false;
+
+        foreach (var stop in _stops.Skip(index))
+            if (!route.TryAdd(stop.Customer))
+                return false;
+
+        newRoute = route;
+        return true;
+    }
+
+    public Route RemoveAt(int index)
+    {
+        // exclude depot
+        if (index < 1 || index > _stops.Count - 1)
+            throw new ArgumentOutOfRangeException(nameof(index));
+
+        var route = new Route(_stops.Take(index).ToList(), Capacity);
+        foreach (var stop in _stops.Skip(index + 1))
+            route.Add(stop.Customer);
+
+        return route;
     }
 
     public override string ToString()
