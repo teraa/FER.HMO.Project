@@ -18,11 +18,11 @@ public class GreedySolver : ISolver
                 solution.Routes.Add(route);
             }
 
+            // ReSharper disable once AccessToModifiedClosure
             var eligible = unassigned
                 .Select(x => (customer: x, isEligible: route.CanAdd(x, out var serviceStartTime), serviceStartTime))
                 .Where(x => x.isEligible)
-                .OrderBy(x => x.serviceStartTime)
-                .ToList();
+                .OrderBy(x => x.serviceStartTime);
 
             var (customer, _, _) = eligible
                 .FirstOrDefault();
