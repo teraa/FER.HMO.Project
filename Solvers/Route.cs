@@ -4,7 +4,7 @@ namespace Solvers;
 
 public class Route
 {
-    private List<Stop> _stops;
+    private readonly List<Stop> _stops;
 
     public Route(Customer depot, int capacity)
     {
