@@ -69,6 +69,13 @@ public class Route
             func: (acc, current) => (acc.Distance + Vector2.Distance(acc.Previous, current), current),
             resultSelector: acc => acc.Distance);
 
+    private static int GetTravelTime(Vector2 a, Vector2 b)
+    {
+        var distance = Vector2.Distance(a, b);
+        var travelTime = (int) Math.Ceiling(distance);
+        return travelTime;
+    }
+
     public bool CanAdd(Customer customer, out int serviceStartTime)
     {
         serviceStartTime = 0;
@@ -77,17 +84,22 @@ public class Route
         if (Demand + customer.Demand > Capacity)
             return false;
 
-        var distance = Vector2.Distance(Position, customer.Position);
-        var travelTime = (int) Math.Ceiling(distance);
-        serviceStartTime = _stops.Last().ServiceCompletedAt + travelTime;
+        serviceStartTime = _stops.Last().ServiceCompletedAt + GetTravelTime(Position, customer.Position);
 
-        // Time
+        // Service on time
         if (serviceStartTime > customer.DueTime)
             return false;
 
         // Wait if early
         if (serviceStartTime < customer.ReadyTime)
             serviceStartTime = customer.ReadyTime;
+
+        // Can return to depot in time
+        var depotReturnTime =
+            serviceStartTime + customer.ServiceTime + GetTravelTime(customer.Position, Depot.Position);
+
+        if (depotReturnTime > Depot.DueTime)
+            return false;
 
         return true;
     }
