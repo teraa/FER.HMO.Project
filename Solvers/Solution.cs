@@ -94,15 +94,15 @@ public class Route
         if (serviceStartTime < customer.ReadyTime)
             serviceStartTime = customer.ReadyTime;
 
-        // Can return to depot in time
-        if (!ReferenceEquals(customer, Depot))
-        {
-            var depotReturnTime =
-                serviceStartTime + customer.ServiceTime + GetTravelTime(customer.Position, Depot.Position);
+        if (ReferenceEquals(customer, Depot))
+            return true;
 
-            if (depotReturnTime > Depot.DueTime)
-                return false;
-        }
+        // Can return to depot in time
+        var depotReturnTime =
+            serviceStartTime + customer.ServiceTime + GetTravelTime(customer.Position, Depot.Position);
+
+        if (depotReturnTime > Depot.DueTime)
+            return false;
 
         return true;
     }
