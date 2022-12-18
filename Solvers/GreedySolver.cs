@@ -14,12 +14,15 @@ public class GreedySolver : ISolver
 
             // ReSharper disable once AccessToModifiedClosure
             var eligible = unassigned
-                .Select(x => (customer: x, isEligible: route.CanAdd(x, out var serviceStartTime), serviceStartTime))
-                .Where(x => x.isEligible)
-                .OrderBy(x => x.serviceStartTime);
+                .Select(x => (
+                    Customer: x,
+                    IsEligible: route.CanAdd(x, out var serviceStartTime),
+                    ServiceStartTime: serviceStartTime
+                ))
+                .Where(x => x.IsEligible)
+                .OrderBy(x => x.ServiceStartTime);
 
-            var (customer, _, _) = eligible
-                .FirstOrDefault();
+            var (customer, _, _) = eligible.FirstOrDefault();
 
             if (customer is null)
             {
