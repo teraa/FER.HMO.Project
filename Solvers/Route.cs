@@ -8,7 +8,6 @@ public class Route
 
     public Route(Customer depot, int capacity)
     {
-        Depot = depot;
         Capacity = capacity;
         _stops = new List<Stop>
         {
@@ -16,8 +15,8 @@ public class Route
         };
     }
 
-    public Customer Depot { get; }
     public int Capacity { get; }
+    public Customer Depot => _stops.First().Customer;
     public IReadOnlyList<Stop> Stops => _stops;
     public Vector2 Position => _stops.Last().Customer.Position;
     public int Time => _stops.Last().ServiceCompletedAt;
