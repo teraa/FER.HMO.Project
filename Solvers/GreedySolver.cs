@@ -27,7 +27,7 @@ public class GreedySolver : ISolver
             if (customer is null)
             {
                 // return to depot and start a new route
-                route.Add(instance.Depot);
+                route.Add(route.Depot);
                 route = null;
             }
             else
