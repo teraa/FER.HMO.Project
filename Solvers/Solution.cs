@@ -59,6 +59,7 @@ public class Route
     public int Capacity { get; }
     public IReadOnlyList<Stop> Stops => _stops;
     public Vector2 Position => _stops.Last().Customer.Position;
+    public int Time => _stops.Last().ServiceCompletedAt;
     public int Demand => _stops.Sum(x => x.Customer.Demand);
 
     public float Distance => _stops
@@ -84,7 +85,7 @@ public class Route
         if (Demand + customer.Demand > Capacity)
             return false;
 
-        serviceStartTime = _stops.Last().ServiceCompletedAt + GetTravelTime(Position, customer.Position);
+        serviceStartTime = Time + GetTravelTime(Position, customer.Position);
 
         // Service on time
         if (serviceStartTime > customer.DueTime)
