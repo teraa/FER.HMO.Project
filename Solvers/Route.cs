@@ -69,12 +69,19 @@ public class Route
         return true;
     }
 
-    public void Add(Customer customer)
+    public bool TryAdd(Customer customer)
     {
         if (!CanAdd(customer, out var serviceStartTime))
-            throw new InvalidOperationException();
+            return false;
 
         _stops.Add(new Stop(customer, serviceStartTime));
+        return true;
+    }
+
+    public void Add(Customer customer)
+    {
+        if (!TryAdd(customer))
+            throw new InvalidOperationException();
     }
 
     public override string ToString()
