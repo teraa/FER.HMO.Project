@@ -1,22 +1,16 @@
-using System.Diagnostics;
-
 namespace Solvers;
 
 public class GreedySolver : ISolver
 {
     public Solution Solve(Instance instance)
     {
-        var solution = new Solution();
+        var solution = new Solution(instance.Vehicles);
         var unassigned = instance.Customers.ToList();
         var route = null as Route;
 
         while (unassigned.Any())
         {
-            if (route is null)
-            {
-                route = new Route(instance.Depot, instance.Capacity);
-                solution.Routes.Add(route);
-            }
+            route ??= solution.CreateRoute(instance.Depot, instance.Capacity);
 
             // ReSharper disable once AccessToModifiedClosure
             var eligible = unassigned
@@ -30,7 +24,6 @@ public class GreedySolver : ISolver
             if (customer is null)
             {
                 // return to depot and start a new route
-                Debug.Assert(solution.Routes.Count < instance.Vehicles);
                 route.Add(instance.Depot);
                 route = null;
             }
