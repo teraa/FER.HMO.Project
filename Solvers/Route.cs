@@ -1,8 +1,10 @@
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace Solvers;
 
+[DebuggerDisplay("{DebuggerDisplay}")]
 public class Route
 {
     private readonly List<Stop> _stops;
@@ -31,6 +33,9 @@ public class Route
     public Vector2 Position => _stops.Last().Customer.Position;
     public int Time => _stops.Last().ServiceCompletedAt;
     public int Demand => _stops.Sum(x => x.Customer.Demand);
+
+    private string DebuggerDisplay
+        => $"Demand: {Demand}/{Capacity}, Stops: {_stops.Count}, Time: {Time}, Distance: {Distance}";
 
     public float Distance => _stops
         .Skip(1)

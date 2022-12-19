@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using System.Text;
 
 namespace Solvers;
 
+[DebuggerDisplay("{DebuggerDisplay}")]
 public class Solution
 {
     private readonly List<Route> _routes = new();
@@ -14,6 +16,9 @@ public class Solution
     public int Vehicles { get; }
     public IReadOnlyList<Route> Routes => _routes;
     public float Distance => _routes.Sum(x => x.Distance);
+
+    private string DebuggerDisplay
+        => $"Vehicles: {Routes.Count}/{Vehicles}, Distance: {Distance}";
 
     public override string ToString()
     {
