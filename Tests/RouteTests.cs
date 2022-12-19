@@ -4,15 +4,15 @@ using System.Numerics;
 namespace Tests;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class GetTravelTimeData : TheoryData<Vector2, Vector2, int>
+public class GetDiffData : TheoryData<Vector2, Vector2, int, float>
 {
-    public GetTravelTimeData()
+    public GetDiffData()
     {
-        AddRow(Vector2.Zero, Vector2.Zero, 0);
-        AddRow(Vector2.Zero, Vector2.UnitX, 1);
-        AddRow(Vector2.UnitY, Vector2.UnitX, 2);
-        AddRow(Vector2.Zero, Vector2.One, 2);
-        AddRow(Vector2.Zero, -Vector2.One, 2);
+        AddRow(Vector2.Zero, Vector2.Zero, 0, 0);
+        AddRow(Vector2.Zero, Vector2.UnitX, 1, 1);
+        AddRow(Vector2.UnitY, Vector2.UnitX, 2, Math.Sqrt(2));
+        AddRow(Vector2.Zero, Vector2.One, 2, Math.Sqrt(2));
+        AddRow(Vector2.Zero, -Vector2.One, 2, Math.Sqrt(2));
     }
 }
 
@@ -75,10 +75,10 @@ public class RouteTests
     }
 
     [Theory]
-    [ClassData(typeof(GetTravelTimeData))]
-    public void GetTravelTimeTests(Vector2 start, Vector2 end, int expected)
+    [ClassData(typeof(GetDiffData))]
+    public void GetDiffTests(Vector2 start, Vector2 end, int expectedTime, float expectedDistance)
     {
-        Route.GetTravelTime(start, end).Should().Be(expected);
+        Route.GetDiff(start, end).Should().Be((expectedTime, expectedDistance));
     }
 
     [Theory]
@@ -87,8 +87,8 @@ public class RouteTests
     {
         var route = new Route(depot, capacity);
 
-        route.CanAdd(customer, out var time).Should().BeTrue(message);
-        time.Should().Be(expectedStartTime);
+        route.CanAdd(customer, out var stop).Should().BeTrue(message);
+        stop!.ServiceStartedAt.Should().Be(expectedStartTime);
     }
 
     [Fact]

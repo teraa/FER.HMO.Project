@@ -14,7 +14,7 @@ public class Route
         Capacity = capacity;
         _stops = new List<Stop>
         {
-            new(depot, 0),
+            new(depot, 0, 0),
         };
     }
 
@@ -38,24 +38,18 @@ public class Route
     private string DebuggerDisplay
         => $"Demand: {Demand}/{Capacity}, Stops: {_stops.Count}, Time: {Time}, Distance: {Distance}";
 
-    public float Distance => _stops
-        .Skip(1)
-        .Select(x => x.Customer.Position)
-        .Aggregate(
-            seed: (Distance: 0f, Previous: _stops.First().Customer.Position),
-            func: (acc, current) => (acc.Distance + Vector2.Distance(acc.Previous, current), current),
-            resultSelector: acc => acc.Distance);
+    public float Distance => _stops.Last().Distance;
 
-    public static int GetTravelTime(Vector2 a, Vector2 b)
+    public static (int Time, float Distance) GetDiff(Vector2 a, Vector2 b)
     {
         var distance = Vector2.Distance(a, b);
         var travelTime = (int) Math.Ceiling(distance);
-        return travelTime;
+        return (travelTime, distance);
     }
 
-    public bool CanAdd(Customer customer, out int serviceStartTime)
+    public bool CanAdd(Customer customer, [NotNullWhen(true)] out Stop? stop)
     {
-        serviceStartTime = 0;
+        stop = null;
 
         if (_stops.Skip(1).Select(x => x.Customer).Contains(customer))
             return false;
@@ -64,7 +58,8 @@ public class Route
         if (Demand + customer.Demand > Capacity)
             return false;
 
-        serviceStartTime = Time + GetTravelTime(Position, customer.Position);
+        var diff = GetDiff(Position, customer.Position);
+        var serviceStartTime = Time + diff.Time;
 
         // Service on time
         if (serviceStartTime > customer.DueTime)
@@ -74,17 +69,20 @@ public class Route
         if (serviceStartTime < customer.ReadyTime)
             serviceStartTime = customer.ReadyTime;
 
+        stop = new Stop(customer, serviceStartTime, Distance + diff.Distance);
+
         if (customer == Depot)
             return true;
 
         // Can return to depot in time
         var depotReturnTime =
-            serviceStartTime + customer.ServiceTime + GetTravelTime(customer.Position, Depot.Position);
+            serviceStartTime + customer.ServiceTime + GetDiff(customer.Position, Depot.Position).Time;
 
-        if (depotReturnTime > Depot.DueTime)
-            return false;
+        if (depotReturnTime <= Depot.DueTime)
+            return true;
 
-        return true;
+        stop = null;
+        return false;
     }
 
     public void Seal()
@@ -94,10 +92,10 @@ public class Route
 
     public bool TryAdd(Customer customer)
     {
-        if (!CanAdd(customer, out var serviceStartTime))
+        if (!CanAdd(customer, out var stop))
             return false;
 
-        _stops.Add(new Stop(customer, serviceStartTime));
+        _stops.Add(stop);
         return true;
     }
 

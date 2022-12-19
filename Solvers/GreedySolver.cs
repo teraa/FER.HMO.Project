@@ -20,16 +20,16 @@ public class GreedySolver : ISolver
             // ReSharper disable once AccessToModifiedClosure
             var eligible = unassigned
                 .Select(x => (
-                    Customer: x,
-                    IsEligible: route.CanAdd(x, out var serviceStartTime),
-                    ServiceStartTime: serviceStartTime
+                    // ReSharper disable once VariableHidesOuterVariable
+                    IsEligible: route.CanAdd(x, out var stop),
+                    Stop: stop
                 ))
                 .Where(x => x.IsEligible)
-                .OrderBy(x => x.ServiceStartTime);
+                .OrderBy(x => x.Stop!.ServiceStartedAt);
 
-            var (customer, _, _) = eligible.FirstOrDefault();
+            var (_, stop) = eligible.FirstOrDefault();
 
-            if (customer is null)
+            if (stop is null)
             {
                 // return to depot and start a new route
                 route.Seal();
@@ -37,8 +37,8 @@ public class GreedySolver : ISolver
             }
             else
             {
-                route.Add(customer);
-                unassigned.Remove(customer);
+                route.Add(stop.Customer);
+                unassigned.Remove(stop.Customer);
             }
         }
 
