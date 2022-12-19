@@ -7,8 +7,12 @@ public interface ISolver
 
 public class Solver : ISolver
 {
+    public ISolver InitialSolver { get; set; } = new GreedySolver();
+
     public Solution Solve(Instance instance)
     {
-        return new GreedySolver().Solve(instance);
+        var initial = InitialSolver.Solve(instance);
+
+        return initial;
     }
 }
