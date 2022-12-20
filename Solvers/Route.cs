@@ -102,7 +102,7 @@ public class Route
     {
         // exclude depot
         if (index < 1 || index > _stops.Count - 1)
-            throw new ArgumentOutOfRangeException(nameof(index));
+            throw new IndexOutOfRangeException();
 
         newRoute = null;
         var route = new Route(_stops.Take(index).ToList(), Capacity);
@@ -122,7 +122,7 @@ public class Route
     {
         // exclude depot
         if (index < 1 || index > _stops.Count - 1)
-            throw new ArgumentOutOfRangeException(nameof(index));
+            throw new IndexOutOfRangeException();
 
         var route = new Route(_stops.Take(index).ToList(), Capacity);
         foreach (var stop in _stops.Skip(index + 1))
