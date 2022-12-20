@@ -57,6 +57,9 @@ public class Route
     {
         serviceStartTime = 0;
 
+        if (_stops.Skip(1).Select(x => x.Customer).Contains(customer))
+            return false;
+
         // Capacity
         if (Demand + customer.Demand > Capacity)
             return false;
