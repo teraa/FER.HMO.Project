@@ -21,7 +21,7 @@ public class Route
     private Route(List<Stop> stops, int capacity)
     {
         if (stops.Count < 1)
-            throw new ArgumentException("Must include at least one stop (depot)", nameof(stops));
+            throw new ArgumentException("Must include at least one stop (depot).", nameof(stops));
 
         _stops = stops;
         Capacity = capacity;
@@ -101,7 +101,7 @@ public class Route
     public bool TryInsert(Customer customer, int index, [NotNullWhen(true)] out Route? newRoute)
     {
         if (index < 1 || index > _stops.Count - 1)
-            throw new IndexOutOfRangeException("Cannot insert before start or after end depot");
+            throw new IndexOutOfRangeException("Cannot insert before start or after end depot.");
 
         newRoute = null;
         var route = new Route(_stops.Take(index).ToList(), Capacity);
@@ -133,11 +133,11 @@ public class Route
     public Route Remove(Customer customer)
     {
         if (ReferenceEquals(customer, Depot))
-            throw new ArgumentException("Cannot remove depot", nameof(customer));
+            throw new ArgumentException("Cannot remove depot.", nameof(customer));
 
         int index = _stops.FindIndex(x => ReferenceEquals(x.Customer, customer));
         if (index == -1)
-            throw new ArgumentException("Specified customer is not a part of this route", nameof(customer));
+            throw new ArgumentException("Specified customer is not a part of this route.", nameof(customer));
 
         var route = new Route(_stops.Take(index).ToList(), Capacity);
         foreach (var stop in _stops.Skip(index + 1))
