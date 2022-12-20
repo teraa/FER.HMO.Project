@@ -56,7 +56,6 @@ public class RouteTests
         time.Should().Be(expectedStartTime);
     }
 
-
     [Fact]
     public void CanAdd_OverCapacity()
     {
@@ -128,7 +127,6 @@ public class RouteTests
         newRoute.Stops.Select(x => x.Customer).Should().Equal(depot, depot);
     }
 
-
     [Theory]
     [InlineData(0)]
     [InlineData(2)]
@@ -143,5 +141,34 @@ public class RouteTests
         route.Stops.Select(x => x.Customer).Should().Equal(depot, customer, depot);
 
         Assert.Throws<IndexOutOfRangeException>(() => route.RemoveAt(index));
+    }
+
+    [Fact]
+    public void Remove_Customer()
+    {
+        var depot = _depot;
+        var customer = _customer;
+        var route = new Route(depot, 0);
+        route.Add(customer);
+        route.Add(depot);
+
+        route.Stops.Select(x => x.Customer).Should().Equal(depot, customer, depot);
+
+        var newRoute = route.Remove(customer);
+        newRoute.Stops.Select(x => x.Customer).Should().Equal(depot, depot);
+    }
+
+    [Fact]
+    public void Remove_Depot_Throws()
+    {
+        var depot = _depot;
+        var customer = _customer;
+        var route = new Route(depot, 0);
+        route.Add(customer);
+        route.Add(depot);
+
+        route.Stops.Select(x => x.Customer).Should().Equal(depot, customer, depot);
+
+        Assert.Throws<ArgumentException>(() => route.Remove(depot));
     }
 }

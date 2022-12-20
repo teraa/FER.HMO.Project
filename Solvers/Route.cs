@@ -130,6 +130,22 @@ public class Route
         return route;
     }
 
+    public Route Remove(Customer customer)
+    {
+        if (ReferenceEquals(customer, Depot))
+            throw new ArgumentException("Cannot remove depot", nameof(customer));
+
+        int index = _stops.FindIndex(x => ReferenceEquals(x.Customer, customer));
+        if (index == -1)
+            throw new ArgumentException("Specified customer is not a part of this route", nameof(customer));
+
+        var route = new Route(_stops.Take(index).ToList(), Capacity);
+        foreach (var stop in _stops.Skip(index + 1))
+            route.Add(stop.Customer);
+
+        return route;
+    }
+
     public override string ToString()
         => string.Join("->", _stops.Select(x => $"{x.Customer.Id}({x.ServiceStartedAt})"));
 }
