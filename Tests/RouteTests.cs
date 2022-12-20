@@ -39,6 +39,26 @@ public class RouteTests
     private static readonly Customer _depot = new(0, Vector2.Zero, 0, 0, 0, 0);
     private static readonly Customer _customer = _depot with {Id = 1};
 
+    [Fact]
+    public void IsFinishedByReference()
+    {
+        var route = new Route(_depot, 0);
+        route.Add(route.Depot with { });
+        route.IsFinished.Should().BeFalse();
+    }
+
+    [Fact]
+    public void RemoveDepotByReference()
+    {
+        var route = new Route(_depot, 0);
+        var depotClone = route.Depot with { };
+        route.Add(depotClone);
+        route.Add(route.Depot);
+        route.IsFinished.Should().BeTrue();
+        route.Remove(depotClone);
+        Assert.Throws<ArgumentException>(() => route.Remove(route.Depot));
+    }
+
     [Theory]
     [ClassData(typeof(GetTravelTimeData))]
     public void GetTravelTimeTests(Vector2 start, Vector2 end, int expected)
