@@ -2,7 +2,7 @@ namespace Solvers;
 
 public class GreedySolver : ISolver
 {
-    public Solution Solve(Instance instance)
+    public Task<Solution> SolveAsync(Instance instance, CancellationToken stoppingToken = default)
     {
         var solution = new Solution(instance.Vehicles);
         var unassigned = instance.Customers.ToList();
@@ -40,6 +40,6 @@ public class GreedySolver : ISolver
         if (route is {IsFinished: false})
             route.Seal();
 
-        return solution;
+        return Task.FromResult(solution);
     }
 }

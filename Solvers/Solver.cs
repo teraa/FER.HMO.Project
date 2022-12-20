@@ -2,16 +2,16 @@ namespace Solvers;
 
 public interface ISolver
 {
-    Solution Solve(Instance instance);
+    Task<Solution> SolveAsync(Instance instance, CancellationToken stoppingToken);
 }
 
 public class Solver : ISolver
 {
     public ISolver InitialSolver { get; set; } = new GreedySolver();
 
-    public Solution Solve(Instance instance)
+    public Task<Solution> SolveAsync(Instance instance, CancellationToken stoppingToken = default)
     {
-        var initial = InitialSolver.Solve(instance);
+        var initial = InitialSolver.SolveAsync(instance, stoppingToken);
 
         return initial;
     }
