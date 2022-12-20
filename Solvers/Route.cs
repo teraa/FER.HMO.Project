@@ -87,6 +87,11 @@ public class Route
         return true;
     }
 
+    public void Seal()
+    {
+        Add(Depot);
+    }
+
     public bool TryAdd(Customer customer)
     {
         if (!CanAdd(customer, out var serviceStartTime))

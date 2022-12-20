@@ -77,6 +77,16 @@ public class RouteTests
     }
 
     [Fact]
+    public void Seal()
+    {
+        var depot = _depot;
+        var route = new Route(depot, 0);
+        route.Seal();
+        route.Stops.Select(x => x.Customer).Should().Equal(depot, depot);
+        Assert.Throws<InvalidOperationException>(() => route.Seal());
+    }
+
+    [Fact]
     public void CanAdd_OverCapacity()
     {
         var depot = _depot;
