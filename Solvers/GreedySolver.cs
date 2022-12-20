@@ -37,6 +37,9 @@ public class GreedySolver : ISolver
             }
         }
 
+        if (route is {IsFinished: false})
+            route.Add(route.Depot);
+
         return solution;
     }
 }
