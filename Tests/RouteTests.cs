@@ -9,6 +9,15 @@ public class RouteTests
     private static readonly Customer _customer = _depot with {Id = 1};
 
     [Fact]
+    public void GetTravelTime()
+    {
+        Route.GetTravelTime(Vector2.Zero, Vector2.Zero).Should().Be(0);
+        Route.GetTravelTime(Vector2.Zero, Vector2.UnitX).Should().Be(1);
+        Route.GetTravelTime(Vector2.Zero, Vector2.One).Should().Be(2);
+        Route.GetTravelTime(Vector2.Zero, -Vector2.One).Should().Be(2);
+    }
+
+    [Fact]
     public void CanAdd_Zero()
     {
         var depot = _depot;

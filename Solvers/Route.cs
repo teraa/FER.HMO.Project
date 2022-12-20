@@ -45,7 +45,7 @@ public class Route
             func: (acc, current) => (acc.Distance + Vector2.Distance(acc.Previous, current), current),
             resultSelector: acc => acc.Distance);
 
-    private static int GetTravelTime(Vector2 a, Vector2 b)
+    public static int GetTravelTime(Vector2 a, Vector2 b)
     {
         var distance = Vector2.Distance(a, b);
         var travelTime = (int) Math.Ceiling(distance);
