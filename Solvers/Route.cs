@@ -28,7 +28,7 @@ public class Route
     }
 
     public int Capacity { get; }
-    public bool IsFinished => _stops.First().Customer == _stops.Last().Customer;
+    public bool IsFinished => _stops.First().Customer == _stops.Last().Customer && _stops.Count > 1;
     public Customer Depot => _stops.First().Customer;
     public IReadOnlyList<Stop> Stops => _stops;
     public Vector2 Position => _stops.Last().Customer.Position;

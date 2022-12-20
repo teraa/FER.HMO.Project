@@ -40,6 +40,21 @@ public class RouteTests
     private static readonly Customer _customer = _depot with {Id = 1};
 
     [Fact]
+    public void IsFinished_Empty()
+    {
+        var route = new Route(_depot, 0);
+        route.IsFinished.Should().BeFalse();
+    }
+
+    [Fact]
+    public void IsFinished_DepotToDepot()
+    {
+        var route = new Route(_depot, 0);
+        route.Seal();
+        route.IsFinished.Should().BeTrue();
+    }
+
+    [Fact]
     public void IsFinishedByReference()
     {
         var route = new Route(_depot, 0);
