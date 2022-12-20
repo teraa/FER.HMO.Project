@@ -45,7 +45,7 @@ public class Solution
     public Route CreateRoute(Customer depot, int capacity)
     {
         if (_routes.Count == Vehicles)
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("Creating a new route would exceed the vehicle limit");
 
         var route = new Route(depot, capacity);
         _routes.Add(route);
