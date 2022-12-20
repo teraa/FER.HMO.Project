@@ -109,6 +109,9 @@ public class Route
 
     public bool TryInsert(Customer customer, int index, [NotNullWhen(true)] out Route? newRoute)
     {
+        if (!IsFinished)
+            throw new InvalidOperationException("Route is not finished.");
+
         if (index < 1 || index > _stops.Count - 1)
             throw new IndexOutOfRangeException("Cannot insert before start or after end depot.");
 
@@ -128,6 +131,9 @@ public class Route
 
     public Route RemoveAt(int index)
     {
+        if (!IsFinished)
+            throw new InvalidOperationException("Route is not finished.");
+
         // exclude depot
         if (index < 1 || index >= _stops.Count - 1)
             throw new IndexOutOfRangeException();
@@ -141,6 +147,9 @@ public class Route
 
     public Route Remove(Customer customer)
     {
+        if (!IsFinished)
+            throw new InvalidOperationException("Route is not finished.");
+
         if (customer == Depot)
             throw new ArgumentException("Cannot remove depot.", nameof(customer));
 
