@@ -27,7 +27,7 @@ public class GreedySolver : ISolver
             if (customer is null)
             {
                 // return to depot and start a new route
-                route.Add(route.Depot);
+                route.Seal();
                 route = null;
             }
             else
@@ -38,7 +38,7 @@ public class GreedySolver : ISolver
         }
 
         if (route is {IsFinished: false})
-            route.Add(route.Depot);
+            route.Seal();
 
         return solution;
     }

@@ -40,10 +40,10 @@ public class SolutionTests
 
         var route1 = solution.CreateRoute(depot, 1);
         route1.Add(customer);
-        route1.Add(depot);
+        route1.Seal();
 
         var route2 = solution.CreateRoute(depot, 0);
-        route2.Add(depot);
+        route2.Seal();
 
         solution.TryMove(customer, route2, 1, out _).Should().BeFalse();
     }
@@ -59,10 +59,10 @@ public class SolutionTests
         var route1 = solution.CreateRoute(depot, 0);
         route1.Add(customer1);
         route1.Add(customer2);
-        route1.Add(depot);
+        route1.Seal();
 
         var route2 = solution.CreateRoute(depot, 0);
-        route2.Add(depot);
+        route2.Seal();
 
         solution.TryMove(customer2, route2, 1, out var newSolution).Should().BeTrue();
         newSolution!.Routes.Should().HaveCount(2);
@@ -79,10 +79,10 @@ public class SolutionTests
 
         var route1 = solution.CreateRoute(depot, 0);
         route1.Add(customer);
-        route1.Add(depot);
+        route1.Seal();
 
         var route2 = solution.CreateRoute(depot, 0);
-        route2.Add(depot);
+        route2.Seal();
 
         solution.TryMove(customer, route2, 1, out var newSolution).Should().BeTrue();
         newSolution!.Routes.Should().HaveCount(1);
@@ -100,7 +100,7 @@ public class SolutionTests
         var route = solution.CreateRoute(depot, 0);
         route.Add(customer1);
         route.Add(customer2);
-        route.Add(depot);
+        route.Seal();
 
         solution.TryMove(customer1, route, 2, out _).Should().BeFalse();
     }

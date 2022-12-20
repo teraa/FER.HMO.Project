@@ -53,7 +53,7 @@ public class RouteTests
         var route = new Route(_depot, 0);
         var depotClone = route.Depot with { };
         route.Add(depotClone);
-        route.Add(route.Depot);
+        route.Seal();
         route.IsFinished.Should().BeTrue();
         route.Remove(depotClone);
         Assert.Throws<ArgumentException>(() => route.Remove(route.Depot));
@@ -122,7 +122,7 @@ public class RouteTests
         var depot = _depot;
         var customer = _customer;
         var route = new Route(depot, 0);
-        route.Add(depot);
+        route.Seal();
 
         route.TryInsert(customer, 1, out var newRoute).Should().BeTrue();
         newRoute!.Stops.Should().HaveCount(3);
@@ -137,7 +137,7 @@ public class RouteTests
         var customer = _customer;
         var route = new Route(depot, 0);
         route.Add(customer);
-        route.Add(depot);
+        route.Seal();
 
         Assert.Throws<IndexOutOfRangeException>(() => route.TryInsert(customer, index, out _));
     }
@@ -149,7 +149,7 @@ public class RouteTests
         var customer = _customer;
         var route = new Route(depot, 0);
         route.Add(customer);
-        route.Add(depot);
+        route.Seal();
 
         route.Stops.Select(x => x.Customer).Should().Equal(depot, customer, depot);
 
@@ -166,7 +166,7 @@ public class RouteTests
         var customer = _customer;
         var route = new Route(depot, 0);
         route.Add(customer);
-        route.Add(depot);
+        route.Seal();
 
         route.Stops.Select(x => x.Customer).Should().Equal(depot, customer, depot);
 
@@ -180,7 +180,7 @@ public class RouteTests
         var customer = _customer;
         var route = new Route(depot, 0);
         route.Add(customer);
-        route.Add(depot);
+        route.Seal();
 
         route.Stops.Select(x => x.Customer).Should().Equal(depot, customer, depot);
 
@@ -195,7 +195,7 @@ public class RouteTests
         var customer = _customer;
         var route = new Route(depot, 0);
         route.Add(customer);
-        route.Add(depot);
+        route.Seal();
 
         route.Stops.Select(x => x.Customer).Should().Equal(depot, customer, depot);
 
