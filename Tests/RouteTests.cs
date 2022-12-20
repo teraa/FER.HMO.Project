@@ -3,73 +3,57 @@ using System.Numerics;
 
 namespace Tests;
 
+// ReSharper disable once ClassNeverInstantiated.Global
+public class GetTravelTimeData : TheoryData<Vector2, Vector2, int>
+{
+    public GetTravelTimeData()
+    {
+        AddRow(Vector2.Zero, Vector2.Zero, 0);
+        AddRow(Vector2.Zero, Vector2.UnitX, 1);
+        AddRow(Vector2.UnitY, Vector2.UnitX, 2);
+        AddRow(Vector2.Zero, Vector2.One, 2);
+        AddRow(Vector2.Zero, -Vector2.One, 2);
+    }
+}
+
+public class CanAddData : TheoryData<Vector2, int, Vector2, int>
+{
+    public CanAddData()
+    {
+        var depot = new Customer(0, Vector2.Zero, 0, 0, 0, 0);
+        var customer = depot with {Id = 1};
+
+        AddRow(depot, 0, customer, 0, "Zero");
+        AddRow(depot, 1, customer with {Demand = 1}, 0, "Demand");
+        AddRow(depot with {DueTime = 4}, 1, customer with {Position = Vector2.UnitX, Demand = 1, ReadyTime = 1, DueTime = 1, ServiceTime = 1}, 1, "Edge");
+        AddRow(depot with {DueTime = 3}, 0, customer with {ServiceTime = 1}, 0, "Return edge");
+        AddRow(depot with {DueTime = 2}, 0, customer with {Position = Vector2.UnitX, ReadyTime = 1, DueTime = 1}, 1, "Exact start");
+    }
+
+    private void AddRow(Customer depot, int capacity, Customer customer, int expectedStartTime, string message)
+        => base.AddRow(message, depot, capacity, customer, expectedStartTime);
+}
+
 public class RouteTests
 {
     private static readonly Customer _depot = new(0, Vector2.Zero, 0, 0, 0, 0);
     private static readonly Customer _customer = _depot with {Id = 1};
 
-    [Fact]
-    public void GetTravelTime()
+    [Theory]
+    [ClassData(typeof(GetTravelTimeData))]
+    public void GetTravelTimeTests(Vector2 start, Vector2 end, int expected)
     {
-        Route.GetTravelTime(Vector2.Zero, Vector2.Zero).Should().Be(0);
-        Route.GetTravelTime(Vector2.Zero, Vector2.UnitX).Should().Be(1);
-        Route.GetTravelTime(Vector2.Zero, Vector2.One).Should().Be(2);
-        Route.GetTravelTime(Vector2.Zero, -Vector2.One).Should().Be(2);
+        Route.GetTravelTime(start, end).Should().Be(expected);
     }
 
-    [Fact]
-    public void CanAdd_Zero()
+    [Theory]
+    [ClassData(typeof(CanAddData))]
+    public void CanAddTests(string message, Customer depot, int capacity, Customer customer, int expectedStartTime)
     {
-        var depot = _depot;
-        var customer = _customer;
-        var route = new Route(depot, 0);
+        var route = new Route(depot, capacity);
 
-        route.CanAdd(customer, out var time).Should().BeTrue();
-        time.Should().Be(0);
-    }
-
-    [Fact]
-    public void CanAdd_Demand()
-    {
-        var depot = _depot;
-        var customer = _customer with {Demand = 1};
-        var route = new Route(depot, 1);
-
-        route.CanAdd(customer, out var time).Should().BeTrue();
-        time.Should().Be(0);
-    }
-
-    [Fact]
-    public void CanAdd_Edge()
-    {
-        var depot = _depot with {DueTime = 4};
-        var customer = _customer with {Position = Vector2.UnitX, Demand = 1, ReadyTime = 1, DueTime = 1, ServiceTime = 1};
-        var route = new Route(depot, 1);
-
-        route.CanAdd(customer, out var time).Should().BeTrue();
-        time.Should().Be(1);
-    }
-
-    [Fact]
-    public void CanAdd_ReturnEdge()
-    {
-        var depot = _depot with {DueTime = 3};
-        var customer = _customer with {ServiceTime = 1};
-        var route = new Route(depot, 0);
-
-        route.CanAdd(customer, out var time).Should().BeTrue();
-        time.Should().Be(0);
-    }
-
-    [Fact]
-    public void CanAdd_StartEdge()
-    {
-        var depot = _depot with {DueTime = 2};
-        var customer = _customer with {Position = Vector2.UnitX, ReadyTime = 1, DueTime = 1};
-        var route = new Route(depot, 0);
-
-        route.CanAdd(customer, out var time).Should().BeTrue();
-        time.Should().Be(1);
+        route.CanAdd(customer, out var time).Should().BeTrue(message);
+        time.Should().Be(expectedStartTime);
     }
 
 
