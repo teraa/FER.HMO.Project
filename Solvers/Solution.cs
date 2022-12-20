@@ -67,6 +67,9 @@ public class Solution
                 .Select(s => s.Customer)
                 .Contains(customer));
 
+        if (sourceRoute == targetRoute)
+            return false;
+
         var newSourceRoute = sourceRoute.Remove(customer);
 
         var routes = _routes.ToList();

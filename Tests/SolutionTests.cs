@@ -88,4 +88,20 @@ public class SolutionTests
         newSolution!.Routes.Should().HaveCount(1);
         newSolution.Routes[0].Stops.Select(x => x.Customer).Should().Equal(depot, customer, depot);
     }
+
+    [Fact]
+    public void TryMove_SameRoute()
+    {
+        var solution = new Solution(1);
+        var depot = new Customer(0, Vector2.Zero, 0, 0, 0, 0);
+        var customer1 = depot with {Id = 1};
+        var customer2 = depot with {Id = 2};
+
+        var route = solution.CreateRoute(depot, 0);
+        route.Add(customer1);
+        route.Add(customer2);
+        route.Add(depot);
+
+        solution.TryMove(customer1, route, 2, out _).Should().BeFalse();
+    }
 }
