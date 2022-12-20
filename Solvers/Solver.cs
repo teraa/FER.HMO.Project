@@ -1,18 +1,33 @@
+using System.Runtime.CompilerServices;
+
 namespace Solvers;
 
 public interface ISolver
 {
-    Task<Solution> SolveAsync(Instance instance, CancellationToken stoppingToken);
+    IAsyncEnumerable<Solution> SolveAsync(Instance instance, CancellationToken stoppingToken = default);
+
+    async Task<Solution> SolveFinalAsync(Instance instance, CancellationToken stoppingToken = default)
+    {
+        var latest = null as Solution;
+
+        await foreach (var solution in SolveAsync(instance, stoppingToken))
+        {
+            latest = solution;
+        }
+
+        return latest!;
+    }
 }
 
 public class Solver : ISolver
 {
     public ISolver InitialSolver { get; set; } = new GreedySolver();
 
-    public Task<Solution> SolveAsync(Instance instance, CancellationToken stoppingToken = default)
+    public async IAsyncEnumerable<Solution> SolveAsync(Instance instance,
+        [EnumeratorCancellation] CancellationToken stoppingToken = default)
     {
-        var initial = InitialSolver.SolveAsync(instance, stoppingToken);
+        var initial = await InitialSolver.SolveFinalAsync(instance, stoppingToken);
 
-        return initial;
+        yield return initial;
     }
 }

@@ -1,9 +1,14 @@
+using System.Runtime.CompilerServices;
+
 namespace Solvers;
 
 public class GreedySolver : ISolver
 {
-    public Task<Solution> SolveAsync(Instance instance, CancellationToken stoppingToken = default)
+    public async IAsyncEnumerable<Solution> SolveAsync(Instance instance,
+        [EnumeratorCancellation] CancellationToken stoppingToken = default)
     {
+        await Task.Yield();
+
         var solution = new Solution(instance.Vehicles);
         var unassigned = instance.Customers.ToList();
         var route = null as Route;
@@ -40,6 +45,6 @@ public class GreedySolver : ISolver
         if (route is {IsFinished: false})
             route.Seal();
 
-        return Task.FromResult(solution);
+        yield return solution;
     }
 }
