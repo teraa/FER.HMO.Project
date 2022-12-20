@@ -1,5 +1,3 @@
-using System.Numerics;
-
 namespace Solvers;
 
 public record Instance(
@@ -7,11 +5,3 @@ public record Instance(
     int Capacity,
     Customer Depot,
     IReadOnlyList<Customer> Customers);
-
-public record Customer(
-    int Id,
-    Vector2 Position,
-    int Demand,
-    int ReadyTime,
-    int DueTime,
-    int ServiceTime);
