@@ -28,7 +28,7 @@ public class Route
     }
 
     public int Capacity { get; }
-    public bool IsFinished => ReferenceEquals(_stops.First().Customer, _stops.Last().Customer);
+    public bool IsFinished => _stops.First().Customer == _stops.Last().Customer;
     public Customer Depot => _stops.First().Customer;
     public IReadOnlyList<Stop> Stops => _stops;
     public Vector2 Position => _stops.Last().Customer.Position;
@@ -71,7 +71,7 @@ public class Route
         if (serviceStartTime < customer.ReadyTime)
             serviceStartTime = customer.ReadyTime;
 
-        if (ReferenceEquals(customer, Depot))
+        if (customer == Depot)
             return true;
 
         // Can return to depot in time
@@ -133,10 +133,10 @@ public class Route
 
     public Route Remove(Customer customer)
     {
-        if (ReferenceEquals(customer, Depot))
+        if (customer == Depot)
             throw new ArgumentException("Cannot remove depot.", nameof(customer));
 
-        int index = _stops.FindIndex(x => ReferenceEquals(x.Customer, customer));
+        int index = _stops.FindIndex(x => x.Customer == customer);
         if (index == -1)
             throw new ArgumentException("Specified customer is not a part of this route.", nameof(customer));
 

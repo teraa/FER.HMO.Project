@@ -8,4 +8,11 @@ public record Customer(
     int Demand,
     int ReadyTime,
     int DueTime,
-    int ServiceTime);
+    int ServiceTime)
+{
+    public virtual bool Equals(Customer? other)
+        => ReferenceEquals(this, other);
+
+    public override int GetHashCode()
+        => HashCode.Combine(Id, Position, Demand, ReadyTime, DueTime, ServiceTime);
+}

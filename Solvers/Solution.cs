@@ -65,7 +65,7 @@ public class Solution
         var sourceRoute = _routes.Single(
             r => r.Stops
                 .Select(s => s.Customer)
-                .Any(x => ReferenceEquals(customer, x)));
+                .Contains(customer));
 
         var newSourceRoute = sourceRoute.Remove(customer);
 
