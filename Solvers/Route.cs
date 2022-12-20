@@ -121,7 +121,7 @@ public class Route
     public Route RemoveAt(int index)
     {
         // exclude depot
-        if (index < 1 || index > _stops.Count - 1)
+        if (index < 1 || index >= _stops.Count - 1)
             throw new IndexOutOfRangeException();
 
         var route = new Route(_stops.Take(index).ToList(), Capacity);
