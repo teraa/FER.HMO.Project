@@ -100,9 +100,8 @@ public class Route
 
     public bool TryInsert(Customer customer, int index, [NotNullWhen(true)] out Route? newRoute)
     {
-        // exclude depot
         if (index < 1 || index > _stops.Count - 1)
-            throw new IndexOutOfRangeException();
+            throw new IndexOutOfRangeException("Cannot insert before start or after end depot");
 
         newRoute = null;
         var route = new Route(_stops.Take(index).ToList(), Capacity);
