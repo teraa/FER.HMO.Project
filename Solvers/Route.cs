@@ -140,7 +140,6 @@ public class Route
             throw new IndexOutOfRangeException();
 
         var route = new Route(_stops.Take(index).ToList(), Capacity);
-
         for (int i = index + 1; i < _stops.Count; i++)
             route.Add(_stops[i].Customer);
 
@@ -155,13 +154,16 @@ public class Route
         if (customer == Depot)
             throw new ArgumentException("Cannot remove depot.", nameof(customer));
 
-        int index = _stops.FindIndex(x => x.Customer == customer);
-        if (index == -1)
+        var stops = new List<Stop>();
+        int i;
+        for (i = 0; i < _stops.Count && _stops[i].Customer != customer; i++)
+            stops.Add(_stops[i]);
+
+        if (stops.Count == _stops.Count)
             throw new ArgumentException("Specified customer is not a part of this route.", nameof(customer));
 
-        var route = new Route(_stops.Take(index).ToList(), Capacity);
-
-        for (int i = index + 1; i < _stops.Count; i++)
+        var route = new Route(stops, Capacity);
+        for (i += 1; i < _stops.Count; i++)
             route.Add(_stops[i].Customer);
 
         return route;
