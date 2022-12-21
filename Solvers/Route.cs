@@ -28,13 +28,15 @@ public class Route
     }
 
     public int Capacity { get; }
-    public bool IsFinished => _stops.First().Customer == _stops.Last().Customer && _stops.Count > 1;
-    public Customer Depot => _stops.First().Customer;
+    public bool IsFinished => First.Customer == Last.Customer && _stops.Count > 1;
+    public Customer Depot => First.Customer;
     public IReadOnlyList<Stop> Stops => _stops;
-    public Vector2 Position => _stops.Last().Customer.Position;
-    public int Time => _stops.Last().ServiceCompletedAt;
-    public float Distance => _stops.Last().Distance;
+    public Vector2 Position => Last.Customer.Position;
+    public int Time => Last.ServiceCompletedAt;
+    public float Distance => Last.Distance;
     public int Demand => _stops.Sum(x => x.Customer.Demand);
+    private Stop First => _stops.First();
+    private Stop Last => _stops.Last();
 
     private string DebuggerDisplay
         => $"Demand: {Demand}/{Capacity}, Stops: {_stops.Count}, Time: {Time}, Distance: {Distance}";
