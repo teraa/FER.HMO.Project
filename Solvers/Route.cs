@@ -14,7 +14,7 @@ public class Route
         Capacity = capacity;
         _stops = new List<Stop>
         {
-            new(depot, 0, 0),
+            new(depot, 0, 0, 0),
         };
     }
 
@@ -34,7 +34,7 @@ public class Route
     public Vector2 Position => Last.Customer.Position;
     public int Time => Last.ServiceCompletedAt;
     public float Distance => Last.Distance;
-    public int Demand => _stops.Sum(x => x.Customer.Demand);
+    public int Demand => Last.Demand;
     private Stop First => _stops.First();
     private Stop Last => _stops.Last();
 
@@ -57,8 +57,9 @@ public class Route
             if (_stops[i].Customer == customer)
                 return false;
 
+        var newDemand = Demand + customer.Demand;
         // Capacity
-        if (Demand + customer.Demand > Capacity)
+        if (newDemand > Capacity)
             return false;
 
         var diff = GetDiff(Position, customer.Position);
@@ -72,7 +73,7 @@ public class Route
         if (serviceStartTime < customer.ReadyTime)
             serviceStartTime = customer.ReadyTime;
 
-        stop = new Stop(customer, serviceStartTime, Distance + diff.Distance);
+        stop = new Stop(customer, serviceStartTime, Distance + diff.Distance, newDemand);
 
         if (customer == Depot)
             return true;
