@@ -33,12 +33,12 @@ public class Route
     public IReadOnlyList<Stop> Stops => _stops;
     public Vector2 Position => _stops.Last().Customer.Position;
     public int Time => _stops.Last().ServiceCompletedAt;
+    public float Distance => _stops.Last().Distance;
     public int Demand => _stops.Sum(x => x.Customer.Demand);
 
     private string DebuggerDisplay
         => $"Demand: {Demand}/{Capacity}, Stops: {_stops.Count}, Time: {Time}, Distance: {Distance}";
 
-    public float Distance => _stops.Last().Distance;
 
     public static (int Time, float Distance) GetDiff(Vector2 a, Vector2 b)
     {
