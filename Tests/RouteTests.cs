@@ -1,4 +1,5 @@
 using System.Numerics;
+
 // ReSharper disable InconsistentNaming
 
 namespace Tests;
@@ -215,5 +216,18 @@ public class RouteTests
         route.Stops.Select(x => x.Customer).Should().Equal(depot, customer, depot);
 
         Assert.Throws<ArgumentException>(() => route.Remove(depot));
+    }
+
+    [Fact]
+    public void Remove_NonExisting_Throws()
+    {
+        var depot = _depot;
+        var customer = _customer;
+        var route = new Route(depot, 0);
+        route.Seal();
+
+        route.Stops.Select(x => x.Customer).Should().Equal(depot, depot);
+
+        Assert.Throws<ArgumentException>(() => route.Remove(customer));
     }
 }
