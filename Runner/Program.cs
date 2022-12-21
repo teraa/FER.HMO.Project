@@ -9,6 +9,13 @@ Directory.CreateDirectory(outDir);
 var instance = InstanceLoader.LoadFromFile(inFile);
 var solver = new Solver();
 var incumbent = null as Solution;
+var cts = new CancellationTokenSource();
+
+Console.CancelKeyPress += (_, e) =>
+{
+    e.Cancel = true;
+    cts.Cancel();
+};
 
 foreach (var time in new[] {1, 5})
 {
@@ -22,7 +29,7 @@ foreach (var time in new[] {1, 5})
 
 int i = 0;
 var sw = Stopwatch.StartNew();
-await foreach (var solution in solver.SolveAsync(instance))
+await foreach (var solution in solver.SolveAsync(instance, cts.Token))
 {
     incumbent = solution;
     Console.WriteLine($"Solution {i++}: {sw.Elapsed}");
