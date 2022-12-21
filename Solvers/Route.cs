@@ -53,8 +53,9 @@ public class Route
     {
         stop = null;
 
-        if (_stops.Skip(1).Select(x => x.Customer).Contains(customer))
-            return false;
+        for (int i = 1; i < _stops.Count; i++)
+            if (_stops[i].Customer == customer)
+                return false;
 
         // Capacity
         if (Demand + customer.Demand > Capacity)
@@ -121,8 +122,8 @@ public class Route
         if (!route.TryAdd(customer))
             return false;
 
-        foreach (var stop in _stops.Skip(index))
-            if (!route.TryAdd(stop.Customer))
+        for (int i = index; i < _stops.Count; i++)
+            if (!route.TryAdd(_stops[i].Customer))
                 return false;
 
         newRoute = route;
@@ -139,8 +140,9 @@ public class Route
             throw new IndexOutOfRangeException();
 
         var route = new Route(_stops.Take(index).ToList(), Capacity);
-        foreach (var stop in _stops.Skip(index + 1))
-            route.Add(stop.Customer);
+
+        for (int i = index + 1; i < _stops.Count; i++)
+            route.Add(_stops[i].Customer);
 
         return route;
     }
@@ -158,8 +160,9 @@ public class Route
             throw new ArgumentException("Specified customer is not a part of this route.", nameof(customer));
 
         var route = new Route(_stops.Take(index).ToList(), Capacity);
-        foreach (var stop in _stops.Skip(index + 1))
-            route.Add(stop.Customer);
+
+        for (int i = index + 1; i < _stops.Count; i++)
+            route.Add(_stops[i].Customer);
 
         return route;
     }
