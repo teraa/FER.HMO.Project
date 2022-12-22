@@ -1,13 +1,20 @@
 using System.Diagnostics;
 using Solvers;
 using Timer = System.Timers.Timer;
+
 // ReSharper disable AccessToModifiedClosure
 
 const string inFile = "../instances/i1.txt";
 const string outDir = "../out/";
 Directory.CreateDirectory(outDir);
 var instance = InstanceLoader.LoadFromFile(inFile);
-var solver = new Solver();
+var solver = new Solver()
+{
+    InitialSolver = new GreedySolver()
+    {
+        ValueFunc = x => -x.ServiceStartedAt / x.Distance,
+    }
+};
 var incumbent = null as Solution;
 var cts = new CancellationTokenSource();
 
@@ -22,7 +29,7 @@ foreach (var time in new[] {1, 5})
     var timer = new Timer(TimeSpan.FromMinutes(time))
     {
         AutoReset = false,
-        Enabled = true
+        // Enabled = true
     };
     timer.Elapsed += (_, _) => WriteToFile($"{time}m", incumbent!);
 }
@@ -32,7 +39,7 @@ var sw = Stopwatch.StartNew();
 await foreach (var solution in solver.SolveAsync(instance, cts.Token))
 {
     incumbent = solution;
-    Console.WriteLine($"[{sw.Elapsed:hh\\:mm\\:ss}] Solution {i++}: {solution.Routes.Count} ({solution.Distance})");
+    Console.WriteLine($"[{sw.Elapsed:hh\\:mm\\:ss}] Solution {i++}: {solution.Routes.Count}/{solution.Vehicles} ({solution.Distance:F})");
 }
 
 WriteToFile("un", incumbent!);
