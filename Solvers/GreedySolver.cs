@@ -4,6 +4,8 @@ namespace Solvers;
 
 public class GreedySolver : ISolver
 {
+    public Func<Stop, double> ValueFunc { get; set; } = x => x.ServiceStartedAt;
+
     public async IAsyncEnumerable<Solution> SolveAsync(Instance instance,
         [EnumeratorCancellation] CancellationToken stoppingToken = default)
     {
@@ -25,9 +27,10 @@ public class GreedySolver : ISolver
                     Stop: stop
                 ))
                 .Where(x => x.IsEligible)
-                .OrderBy(x => x.Stop!.ServiceStartedAt);
+                .Select(x => x.Stop!)
+                .OrderBy(ValueFunc);
 
-            var (_, stop) = eligible.FirstOrDefault();
+            var stop = eligible.FirstOrDefault();
 
             if (stop is null)
             {
