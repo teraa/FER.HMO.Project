@@ -32,8 +32,7 @@ var sw = Stopwatch.StartNew();
 await foreach (var solution in solver.SolveAsync(instance, cts.Token))
 {
     incumbent = solution;
-    Console.WriteLine($"Solution {i++}: {sw.Elapsed}");
-    Console.WriteLine(solution);
+    Console.WriteLine($"[{sw.Elapsed:hh\\:mm\\:ss}] Solution {i++}: {solution.Routes.Count} ({solution.Distance})");
 }
 
 WriteToFile("un", incumbent!);
