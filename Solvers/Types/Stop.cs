@@ -1,4 +1,4 @@
-namespace Solvers;
+namespace Solvers.Types;
 
 public record Stop(Customer Customer, int ServiceStartedAt, float Distance, int Demand)
 {

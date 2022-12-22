@@ -1,3 +1,5 @@
+using Solvers.Types;
+
 namespace Tests;
 
 public class InstanceLoaderTests

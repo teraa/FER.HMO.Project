@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Solvers;
+using Solvers.Types;
 using Timer = System.Timers.Timer;
 
 // ReSharper disable AccessToModifiedClosure

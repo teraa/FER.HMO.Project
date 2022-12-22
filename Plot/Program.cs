@@ -1,4 +1,5 @@
 ﻿using Solvers;
+using Solvers.Types;
 
 var instance = InstanceLoader.LoadFromFile(args[0]);
 var points = instance.Customers

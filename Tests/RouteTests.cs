@@ -1,4 +1,5 @@
 using System.Numerics;
+using Solvers.Types;
 
 // ReSharper disable InconsistentNaming
 

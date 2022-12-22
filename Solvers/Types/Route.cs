@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
-namespace Solvers;
+namespace Solvers.Types;
 
 [DebuggerDisplay("{DebuggerDisplay}")]
 public class Route

@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Solvers;
+namespace Solvers.Types;
 
 public record Customer(
     int Id,

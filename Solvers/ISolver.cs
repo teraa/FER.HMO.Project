@@ -1,3 +1,5 @@
+using Solvers.Types;
+
 namespace Solvers;
 
 public interface ISolver

@@ -1,4 +1,4 @@
-namespace Solvers;
+namespace Solvers.Types;
 
 public record Instance(
     int Vehicles,
