@@ -78,8 +78,8 @@ public class SaSolver : ISolver
 
         return 0;
 
-        var exp = -d / t;
-        var p = Math.Exp(exp);
-        return p;
+        // var exp = -d / t;
+        // var p = Math.Exp(exp);
+        // return p;
     }
 }
