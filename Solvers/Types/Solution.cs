@@ -114,6 +114,17 @@ public class Solution
         return true;
     }
 
+    public bool TryMove(Customer customer, Customer target, [NotNullWhen(true)] out Solution? solution)
+    {
+        var targetRoute = Routes.First(x => x.Stops.Any(x => x.Customer == target));
+        int i;
+        for (i = 0; i < targetRoute.Stops.Count; i++)
+            if (targetRoute.Stops[i].Customer == target)
+                break;
+
+        return TryMove(customer, targetRoute, i, out solution);
+    }
+
     public Solution SplitRoute(Route route)
     {
         if (!_routes.Contains(route))
