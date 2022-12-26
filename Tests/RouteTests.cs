@@ -22,8 +22,8 @@ public class CanAddData : TheoryData<Vector2, int, Vector2, int>
 {
     public CanAddData()
     {
-        var depot = new Customer(0, Vector2.Zero, 0, 0, 0, 0);
-        var customer = depot with {Id = 1};
+        var depot = Data.Depot;
+        var customer = Data.Customer;
 
         AddRow(depot, 0, customer, 0, "Zero");
         AddRow(depot, 1, customer with {Demand = 1}, 0, "Demand");
@@ -38,20 +38,19 @@ public class CanAddData : TheoryData<Vector2, int, Vector2, int>
 
 public class RouteTests
 {
-    private static readonly Customer _depot = new(0, Vector2.Zero, 0, 0, 0, 0);
-    private static readonly Customer _customer = _depot with {Id = 1};
-
     [Fact]
     public void IsFinished_Empty()
     {
-        var route = new Route(_depot, 0);
+        var depot = Data.Depot;
+        var route = new Route(depot, 0);
         route.IsFinished.Should().BeFalse();
     }
 
     [Fact]
     public void IsFinished_DepotToDepot()
     {
-        var route = new Route(_depot, 0);
+        var depot = Data.Depot;
+        var route = new Route(depot, 0);
         route.Seal();
         route.IsFinished.Should().BeTrue();
     }
@@ -59,7 +58,8 @@ public class RouteTests
     [Fact]
     public void IsFinishedByReference()
     {
-        var route = new Route(_depot, 0);
+        var depot = Data.Depot;
+        var route = new Route(depot, 0);
         route.Add(route.Depot with { });
         route.IsFinished.Should().BeFalse();
     }
@@ -67,7 +67,8 @@ public class RouteTests
     [Fact]
     public void RemoveDepotByReference()
     {
-        var route = new Route(_depot, 0);
+        var depot = Data.Depot;
+        var route = new Route(depot, 0);
         var depotClone = route.Depot with { };
         route.Add(depotClone);
         route.Seal();
@@ -96,7 +97,7 @@ public class RouteTests
     [Fact]
     public void Seal()
     {
-        var depot = _depot;
+        var depot = Data.Depot;
         var route = new Route(depot, 0);
         route.Seal();
         route.Stops.Select(x => x.Customer).Should().Equal(depot, depot);
@@ -106,8 +107,8 @@ public class RouteTests
     [Fact]
     public void CanAdd_OverCapacity()
     {
-        var depot = _depot;
-        var customer = _customer with {Demand = 1};
+        var depot = Data.Depot;
+        var customer = Data.Customer with {Demand = 1};
         var route = new Route(depot, 0);
 
         route.CanAdd(customer, out var serviceStartTime).Should().BeFalse();
@@ -116,8 +117,8 @@ public class RouteTests
     [Fact]
     public void CanAdd_OverDueTime()
     {
-        var depot = _depot with {DueTime = 10};
-        var customer = _customer with {Position = Vector2.UnitX};
+        var depot = Data.Depot with {DueTime = 10};
+        var customer = Data.Customer with {Position = Vector2.UnitX};
         var route = new Route(depot, 0);
 
         route.CanAdd(customer, out var serviceStartTime).Should().BeFalse();
@@ -126,8 +127,8 @@ public class RouteTests
     [Fact]
     public void CanAdd_OverReturnDueTime()
     {
-        var depot = _depot with {DueTime = 1};
-        var customer = _customer with {ServiceTime = 2};
+        var depot = Data.Depot with {DueTime = 1};
+        var customer = Data.Customer with {ServiceTime = 2};
         var route = new Route(depot, 0);
 
         route.CanAdd(customer, out var serviceStartTime).Should().BeFalse();
@@ -136,8 +137,8 @@ public class RouteTests
     [Fact]
     public void TryInsert_IndexInRange()
     {
-        var depot = _depot;
-        var customer = _customer;
+        var depot = Data.Depot;
+        var customer = Data.Customer;
         var route = new Route(depot, 0);
         route.Seal();
 
@@ -150,8 +151,8 @@ public class RouteTests
     [InlineData(3)]
     public void TryInsert_IndexOutOfRange(int index)
     {
-        var depot = _depot;
-        var customer = _customer;
+        var depot = Data.Depot;
+        var customer = Data.Customer;
         var route = new Route(depot, 0);
         route.Add(customer);
         route.Seal();
@@ -162,8 +163,8 @@ public class RouteTests
     [Fact]
     public void RemoveAt_IndexInRange()
     {
-        var depot = _depot;
-        var customer = _customer;
+        var depot = Data.Depot;
+        var customer = Data.Customer;
         var route = new Route(depot, 0);
         route.Add(customer);
         route.Seal();
@@ -179,8 +180,8 @@ public class RouteTests
     [InlineData(2)]
     public void RemoveAt_IndexOutOfRange(int index)
     {
-        var depot = _depot;
-        var customer = _customer;
+        var depot = Data.Depot;
+        var customer = Data.Customer;
         var route = new Route(depot, 0);
         route.Add(customer);
         route.Seal();
@@ -193,8 +194,8 @@ public class RouteTests
     [Fact]
     public void Remove_Customer()
     {
-        var depot = _depot;
-        var customer = _customer;
+        var depot = Data.Depot;
+        var customer = Data.Customer;
         var route = new Route(depot, 0);
         route.Add(customer);
         route.Seal();
@@ -208,8 +209,8 @@ public class RouteTests
     [Fact]
     public void Remove_Depot_Throws()
     {
-        var depot = _depot;
-        var customer = _customer;
+        var depot = Data.Depot;
+        var customer = Data.Customer;
         var route = new Route(depot, 0);
         route.Add(customer);
         route.Seal();
@@ -222,8 +223,8 @@ public class RouteTests
     [Fact]
     public void Remove_NonExisting_Throws()
     {
-        var depot = _depot;
-        var customer = _customer;
+        var depot = Data.Depot;
+        var customer = Data.Customer;
         var route = new Route(depot, 0);
         route.Seal();
 
@@ -235,8 +236,10 @@ public class RouteTests
     [Fact]
     public void Split_Unfinished_Throws()
     {
-        var route = new Route(_depot, 0);
-        route.Add(_customer);
+        var depot = Data.Depot;
+        var customer = Data.Customer;
+        var route = new Route(depot, 0);
+        route.Add(customer);
 
         Assert.Throws<InvalidOperationException>(() => route.Split());
     }
@@ -244,8 +247,8 @@ public class RouteTests
     [Fact]
     public void Split_Odd()
     {
-        var depot = _depot;
-        var customer = _customer;
+        var depot = Data.Depot;
+        var customer = Data.Customer;
         var route = new Route(depot, 0);
         route.Add(customer);
         route.Seal();
@@ -258,9 +261,9 @@ public class RouteTests
     [Fact]
     public void Split_Even()
     {
-        var depot = _depot;
-        var customer1 = _customer;
-        var customer2 = _customer with {Id = 2};
+        var depot = Data.Depot;
+        var customer1 = Data.Customer;
+        var customer2 = Data.Customer with {Id = 2};
         var route = new Route(depot, 0);
         route.Add(customer1);
         route.Add(customer2);
