@@ -45,7 +45,7 @@ public class Solution
     public Route CreateRoute(Customer depot, int capacity)
     {
         // if (_routes.Count == Vehicles)
-        //     throw new InvalidOperationException("Creating a new route would exceed the vehicle limit");
+        //     throw new InvalidOperationException("Creating a new route would exceed the vehicle limit.");
 
         var route = new Route(depot, capacity);
         _routes.Add(route);
@@ -55,7 +55,7 @@ public class Solution
     public bool TryMove(Customer customer, Route targetRoute, int targetIndex, [NotNullWhen(true)] out Solution? solution)
     {
         if (!_routes.Contains(targetRoute))
-            throw new ArgumentException("Target route is not a part of this solution", nameof(targetRoute));
+            throw new ArgumentException("Target route is not a part of this solution.", nameof(targetRoute));
 
         solution = null;
 
