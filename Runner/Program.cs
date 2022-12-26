@@ -9,7 +9,7 @@ const string inFile = "../instances/i1.txt";
 const string outDir = "../out/";
 Directory.CreateDirectory(outDir);
 var instance = InstanceLoader.LoadFromFile(inFile);
-var solver = new Solver()
+var solver = new RandomMoveSolver()
 {
     InitialSolver = new GreedySolver()
     {

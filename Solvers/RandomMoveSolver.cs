@@ -3,7 +3,7 @@ using Solvers.Types;
 
 namespace Solvers;
 
-public class Solver : ISolver
+public class RandomMoveSolver : ISolver
 {
     public int? Seed { get; set; }
     public ISolver InitialSolver { get; set; } = new GreedySolver();
