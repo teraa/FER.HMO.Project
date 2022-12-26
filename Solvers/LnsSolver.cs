@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Solvers.Types;
 
@@ -21,6 +22,7 @@ public class LnsSolver : ISolver
 
         yield return incumbent;
 
+        var sw = Stopwatch.StartNew();
         while (!stoppingToken.IsCancellationRequested)
         {
             var customer = instance.Customers.Random(rnd);
@@ -32,6 +34,7 @@ public class LnsSolver : ISolver
 
             if (current.Distance < incumbent.Distance || current.Routes.Count < incumbent.Routes.Count)
             {
+                sw.Restart();
                 yield return incumbent = current;
             }
 
