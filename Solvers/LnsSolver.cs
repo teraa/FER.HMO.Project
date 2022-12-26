@@ -25,20 +25,30 @@ public class LnsSolver : ISolver
         var sw = Stopwatch.StartNew();
         while (!stoppingToken.IsCancellationRequested)
         {
-            var customer = instance.Customers.Random(rnd);
-            var route = previous.Routes.Random(rnd);
-            var index = rnd.Next(1, route.Stops.Count - 1);
-
-            if (!previous.TryMove(customer, route, index, out var current))
-                continue;
-
-            if (current.Distance < incumbent.Distance || current.Routes.Count < incumbent.Routes.Count)
+            if (sw.Elapsed > TimeSpan.FromSeconds(20))
             {
+                var route = previous.Routes.Random(rnd);
+                var current = previous.SplitRoute(route);
+                previous = current;
                 sw.Restart();
-                yield return incumbent = current;
             }
+            else
+            {
+                var customer = instance.Customers.Random(rnd);
+                var route = previous.Routes.Random(rnd);
+                var index = rnd.Next(1, route.Stops.Count - 1);
 
-            previous = current;
+                if (!previous.TryMove(customer, route, index, out var current))
+                    continue;
+
+                if (current.Distance < incumbent.Distance || current.Routes.Count < incumbent.Routes.Count)
+                {
+                    sw.Restart();
+                    yield return incumbent = current;
+                }
+
+                previous = current;
+            }
         }
     }
 }
