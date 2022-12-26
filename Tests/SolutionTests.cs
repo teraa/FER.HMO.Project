@@ -108,4 +108,31 @@ public class SolutionTests
 
         solution.TryMove(customer1, route, 2, out _).Should().BeFalse();
     }
+
+    [Fact]
+    public void Split_InvalidRoute()
+    {
+        var depot = _depot;
+        var solution = new Solution(0);
+        var route = new Route(depot, 0);
+        solution.CreateRoute(depot, 0);
+
+        Assert.Throws<ArgumentException>(() => solution.SplitRoute(route));
+    }
+
+    [Fact]
+    public void Split_ValidRoute()
+    {
+        var depot = _depot;
+        var solution = new Solution(0);
+        solution.CreateRoute(depot, 0);
+
+        solution.Routes.Should().HaveCount(1);
+
+        var route = solution.Routes[0];
+        route.Seal();
+        var next = solution.SplitRoute(route);
+
+        next.Routes.Should().HaveCount(2);
+    }
 }

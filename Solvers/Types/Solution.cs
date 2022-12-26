@@ -86,4 +86,22 @@ public class Solution
         solution = new Solution(routes.ToList(), Vehicles);
         return true;
     }
+
+    public Solution SplitRoute(Route route)
+    {
+        if (!_routes.Contains(route))
+            throw new ArgumentException("Target route is not a part of this solution.", nameof(route));
+
+        var routes = new List<Route>(_routes.Count + 1);
+        for (int i = 0; i < _routes.Count; i++)
+            if (_routes[i] != route)
+                routes.Add(_routes[i]);
+
+        var split = route.Split();
+        routes.Add(split.Item1);
+        routes.Add(split.Item2);
+
+        var solution = new Solution(routes, Vehicles);
+        return solution;
+    }
 };
