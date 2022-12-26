@@ -1,5 +1,5 @@
-using System.Numerics;
 using Solvers.Types;
+
 // ReSharper disable InconsistentNaming
 
 namespace Tests;
@@ -132,5 +132,36 @@ public class SolutionTests
         var next = solution.SplitRoute(route);
 
         next.Routes.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public void TryRemoveCustomer_SingleCustomerInRoute()
+    {
+        var depot = Data.Depot;
+        var customer = Data.Customer;
+        var solution = new Solution(0);
+        var route = solution.CreateRoute(depot, 0);
+        route.Add(customer);
+        route.Seal();
+
+        solution.TryRemoveCustomer(customer, out _).Should().BeFalse();
+    }
+
+    [Fact]
+    public void TryRemoveCustomer_Success()
+    {
+        var depot = Data.Depot;
+        var customer1 = Data.Customer with {Id = 1};
+        var customer2 = Data.Customer with {Id = 2};
+        var solution = new Solution(0);
+        var route = solution.CreateRoute(depot, 0);
+        route.Add(customer1);
+        route.Add(customer2);
+        route.Seal();
+
+        solution.TryRemoveCustomer(customer2, out var newSolution).Should().BeTrue();
+        newSolution!.Routes.Should().HaveCount(2);
+        newSolution.Routes[0].Stops.Select(x => x.Customer).Should().Equal(depot, customer1, depot);
+        newSolution.Routes[1].Stops.Select(x => x.Customer).Should().Equal(depot, customer2, depot);
     }
 }

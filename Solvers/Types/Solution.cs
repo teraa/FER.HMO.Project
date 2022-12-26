@@ -52,6 +52,33 @@ public class Solution
         return route;
     }
 
+    public bool TryRemoveCustomer(Customer customer, [NotNullWhen(true)] out Solution? solution)
+    {
+        var sourceRoute = _routes
+            .Single(r => r.Stops
+                .Select(s => s.Customer)
+                .Contains(customer));
+
+        if (sourceRoute.Stops.Count == 3)
+        {
+            solution = null;
+            return false;
+        }
+
+        var newSourceRoute = sourceRoute.Remove(customer);
+        var newTargetRoute = new Route(sourceRoute.Depot, sourceRoute.Capacity);
+        newTargetRoute.Add(customer);
+        newTargetRoute.Seal();
+
+        var routes = new List<Route>(_routes.Count + 1);
+        routes.AddRange(_routes.Where(x => x != sourceRoute));
+        routes.Add(newSourceRoute);
+        routes.Add(newTargetRoute);
+
+        solution = new Solution(routes, Vehicles);
+        return true;
+    }
+
     public bool TryMove(Customer customer, Route targetRoute, int targetIndex, [NotNullWhen(true)] out Solution? solution)
     {
         if (!_routes.Contains(targetRoute))
