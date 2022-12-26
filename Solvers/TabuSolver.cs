@@ -35,7 +35,7 @@ public class TabuSolver : ISolver
                 .Skip(rnd.Next(0, instance.Customers.Count - _tabu.Count))
                 .First();
 
-            var route = previous.Routes[rnd.Next(0, previous.Routes.Count)];
+            var route = previous.Routes.Random(rnd);
             var index = rnd.Next(1, route.Stops.Count - 1);
 
             if (!previous.TryMove(customer, route, index, out var current))

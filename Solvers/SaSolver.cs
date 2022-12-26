@@ -28,8 +28,8 @@ public class SaSolver : ISolver
         {
             i++;
 
-            var customer = instance.Customers[rnd.Next(0, instance.Customers.Count)];
-            var route = previous.Routes[rnd.Next(0, previous.Routes.Count)];
+            var customer = instance.Customers.Random(rnd);
+            var route = previous.Routes.Random(rnd);
             var index = rnd.Next(1, route.Stops.Count - 1);
 
             if (!previous.TryMove(customer, route, index, out var current))
