@@ -170,6 +170,28 @@ public class Route
         return route;
     }
 
+    public (Route, Route) Split()
+    {
+        if (!IsFinished)
+            throw new InvalidOperationException("Route is not finished.");
+
+        var splitAt = _stops.Count / 2;
+        var stops1 = new List<Stop>(splitAt + 1);
+        for (int i = 0; i < splitAt; i++)
+            stops1.Add(_stops[i]);
+
+        var route1 = new Route(stops1, Capacity);
+        route1.Seal();
+
+        var route2 = new Route(Depot, Capacity);
+        for (int i = splitAt; i < _stops.Count - 1; i++)
+            route2.Add(_stops[i].Customer);
+
+        route2.Seal();
+
+        return (route1, route2);
+    }
+
     public override string ToString()
         => string.Join("->", _stops.Select(x => $"{x.Customer.Id}({x.ServiceStartedAt})"));
 }

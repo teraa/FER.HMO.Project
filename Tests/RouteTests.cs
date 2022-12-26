@@ -231,4 +231,43 @@ public class RouteTests
 
         Assert.Throws<ArgumentException>(() => route.Remove(customer));
     }
+
+    [Fact]
+    public void Split_Unfinished_Throws()
+    {
+        var route = new Route(_depot, 0);
+        route.Add(_customer);
+
+        Assert.Throws<InvalidOperationException>(() => route.Split());
+    }
+
+    [Fact]
+    public void Split_Odd()
+    {
+        var depot = _depot;
+        var customer = _customer;
+        var route = new Route(depot, 0);
+        route.Add(customer);
+        route.Seal();
+
+        var parts = route.Split();
+        parts.Item1.Stops.Select(x => x.Customer).Should().Equal(depot, depot);
+        parts.Item2.Stops.Select(x => x.Customer).Should().Equal(depot, customer, depot);
+    }
+
+    [Fact]
+    public void Split_Even()
+    {
+        var depot = _depot;
+        var customer1 = _customer;
+        var customer2 = _customer with {Id = 2};
+        var route = new Route(depot, 0);
+        route.Add(customer1);
+        route.Add(customer2);
+        route.Seal();
+
+        var parts = route.Split();
+        parts.Item1.Stops.Select(x => x.Customer).Should().Equal(depot, customer1, depot);
+        parts.Item2.Stops.Select(x => x.Customer).Should().Equal(depot, customer2, depot);
+    }
 }
