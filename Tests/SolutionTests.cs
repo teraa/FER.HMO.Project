@@ -1,15 +1,18 @@
 using System.Numerics;
 using Solvers.Types;
+// ReSharper disable InconsistentNaming
 
 namespace Tests;
 
 public class SolutionTests
 {
+    private static readonly Customer _depot = new(0, Vector2.Zero, 0, 0, 0, 0);
+
     [Fact]
     public void CreateRoute_ExactLimit()
     {
         var solution = new Solution(1);
-        var depot = new Customer(0, Vector2.Zero, 0, 0, 0, 0);
+        var depot = _depot;
         solution.CreateRoute(depot, 0);
     }
 
@@ -17,7 +20,7 @@ public class SolutionTests
     public void CreateRoute_OverLimit()
     {
         var solution = new Solution(0);
-        var depot = new Customer(0, Vector2.Zero, 0, 0, 0, 0);
+        var depot = _depot;
         Assert.Throws<InvalidOperationException>(() => solution.CreateRoute(depot, 0));
     }
 
@@ -25,7 +28,7 @@ public class SolutionTests
     public void TryMove_InvalidTarget()
     {
         var solution = new Solution(0);
-        var depot = new Customer(0, Vector2.Zero, 0, 0, 0, 0);
+        var depot = _depot;
         var customer = depot with { };
         var route = new Route(depot, 0);
 
@@ -36,7 +39,7 @@ public class SolutionTests
     public void TryMove_TargetFull()
     {
         var solution = new Solution(2);
-        var depot = new Customer(0, Vector2.Zero, 0, 0, 0, 0);
+        var depot = _depot;
         var customer = depot with {Demand = 1};
 
         var route1 = solution.CreateRoute(depot, 1);
@@ -53,7 +56,7 @@ public class SolutionTests
     public void TryMove_KeepsNonEmpty()
     {
         var solution = new Solution(2);
-        var depot = new Customer(0, Vector2.Zero, 0, 0, 0, 0);
+        var depot = _depot;
         var customer1 = depot with {Id = 1};
         var customer2 = depot with {Id = 2};
 
@@ -75,7 +78,7 @@ public class SolutionTests
     public void TryMove_RemovesEmpty()
     {
         var solution = new Solution(2);
-        var depot = new Customer(0, Vector2.Zero, 0, 0, 0, 0);
+        var depot = _depot;
         var customer = depot with {Id = 1};
 
         var route1 = solution.CreateRoute(depot, 0);
@@ -94,7 +97,7 @@ public class SolutionTests
     public void TryMove_SameRoute()
     {
         var solution = new Solution(1);
-        var depot = new Customer(0, Vector2.Zero, 0, 0, 0, 0);
+        var depot = _depot;
         var customer1 = depot with {Id = 1};
         var customer2 = depot with {Id = 2};
 
