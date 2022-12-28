@@ -6,7 +6,6 @@ namespace Solvers;
 public class GraspSolver : ISolver
 {
     public Func<Stop, double> ValueFunc { get; set; } = x => x.ServiceStartedAt;
-    public int RclSize { get; set; } = 10;
     public int? Seed { get; set; }
 
     public async IAsyncEnumerable<Solution> SolveAsync(Instance instance,
@@ -18,6 +17,13 @@ public class GraspSolver : ISolver
             ? new Random()
             : new Random(Seed.Value);
 
+        var solution = Construct(instance, rnd, 10);
+
+        yield return solution;
+    }
+
+    private Solution Construct(Instance instance, Random rnd, int rclSize)
+    {
         var solution = new Solution(instance.Vehicles);
         var unassigned = instance.Customers.ToList();
         var route = null as Route;
@@ -46,7 +52,7 @@ public class GraspSolver : ISolver
             }
             else
             {
-                var stop = eligible[rnd.Next(0, Math.Min(RclSize, eligible.Length))];
+                var stop = eligible[rnd.Next(0, Math.Min(rclSize, eligible.Length))];
 
                 route.Add(stop.Customer);
                 unassigned.Remove(stop.Customer);
@@ -56,6 +62,6 @@ public class GraspSolver : ISolver
         if (route is {IsFinished: false})
             route.Seal();
 
-        yield return solution;
+        return solution;
     }
 }
