@@ -9,12 +9,15 @@ const string inFile = "../instances/i1.txt";
 const string outDir = "../out/";
 Directory.CreateDirectory(outDir);
 var instance = InstanceLoader.LoadFromFile(inFile);
-var solver = new RandomMoveSolver()
+var solver = new GraspSolver()
 {
-    InitialSolver = new GreedySolver()
-    {
-        ValueFunc = x => -x.ServiceStartedAt / x.Distance,
-    }
+    // InitialSolver = new GreedySolver()
+    // {
+    //     // ValueFunc = x => -x.ServiceStartedAt / x.Distance,
+    //     // ValueFunc = x => (double)x.ServiceStartedAt / x.Customer.DueTime,
+    //     // RclSize = instance.Customers.Count / 10,
+    // },
+    // Tenure = instance.Customers.Count / 10,
 };
 var incumbent = null as Solution;
 var cts = new CancellationTokenSource();
