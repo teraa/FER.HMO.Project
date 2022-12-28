@@ -28,6 +28,16 @@ public class Solution
     private string DebuggerDisplay
         => $"Vehicles: {Routes.Count}/{Vehicles}, Distance: {Distance}";
 
+
+    public static bool operator <(Solution left, Solution right)
+        => left.Routes.Count < right.Routes.Count ||
+           left.Routes.Count == right.Routes.Count && left.Distance < right.Distance;
+
+    public static bool operator >(Solution left, Solution right)
+        => left.Routes.Count > right.Routes.Count ||
+           left.Routes.Count == right.Routes.Count && left.Distance > right.Distance;
+
+
     public override string ToString()
     {
         var sb = new StringBuilder();

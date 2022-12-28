@@ -1,3 +1,4 @@
+using System.Numerics;
 using Solvers.Types;
 
 // ReSharper disable InconsistentNaming
@@ -164,4 +165,62 @@ public class SolutionTests
         newSolution.Routes[0].Stops.Select(x => x.Customer).Should().Equal(depot, customer1, depot);
         newSolution.Routes[1].Stops.Select(x => x.Customer).Should().Equal(depot, customer2, depot);
     }
+
+    [Fact]
+    public void Operator_LessThan_SameRouteCount_LessDistance_True()
+    {
+        var depot = Data.Depot with {DueTime = 100};
+        var customer = Data.Customer with {Position = Vector2.One, DueTime = 100};
+
+        var solution1 = new Solution(0);
+        var route1 = solution1.CreateRoute(depot, 0);
+        route1.Seal();
+
+        var solution2 = new Solution(0);
+        var route2 = solution2.CreateRoute(depot, 0);
+        route2.Add(customer);
+        route2.Seal();
+
+        (solution1 < solution2).Should().BeTrue();
+    }
+
+    [Fact]
+    public void Operator_LessThan_SameRouteCount_SameDistance_False()
+    {
+        var depot = Data.Depot with {DueTime = 100};
+        var customer = Data.Customer with {Position = Vector2.One, DueTime = 100};
+
+        var solution1 = new Solution(0);
+        var route1 = solution1.CreateRoute(depot, 0);
+        route1.Add(customer);
+        route1.Seal();
+
+        var solution2 = new Solution(0);
+        var route2 = solution2.CreateRoute(depot, 0);
+        route2.Add(customer);
+        route2.Seal();
+
+        (solution1 < solution2).Should().BeFalse();
+    }
+
+    [Fact]
+    public void Operator_LessThan_LessRouteCount_True()
+    {
+        var depot = Data.Depot with {DueTime = 100};
+        var customer1 = Data.Customer with {Position = Vector2.One, DueTime = 100};
+        var customer2 = customer1 with {Position = Vector2.One * 2};
+
+        var solution1 = new Solution(0);
+        var route1 = solution1.CreateRoute(depot, 0);
+        route1.Add(customer1);
+        route1.Add(customer2);
+        route1.Seal();
+
+        var solution2 = new Solution(0);
+        solution2.CreateRoute(depot, 0).Seal();
+        solution2.CreateRoute(depot, 0).Seal();
+
+        (solution1 < solution2).Should().BeTrue();
+    }
+
 }
