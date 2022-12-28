@@ -7,7 +7,6 @@ public class SaSolver : ISolver
 {
     public int? Seed { get; set; }
     public ISolver InitialSolver { get; set; } = new GreedySolver();
-    public double InitialTemperature { get; set; } = 1000;
 
     public async IAsyncEnumerable<Solution> SolveAsync(Instance instance,
         [EnumeratorCancellation] CancellationToken stoppingToken = default)
@@ -22,64 +21,38 @@ public class SaSolver : ISolver
 
         yield return incumbent;
 
-        double t = InitialTemperature;
-        ulong i = 0;
+        int i = 0;
+        double t = 1;
         while (!stoppingToken.IsCancellationRequested)
         {
             i++;
+            t *= 0.9;
 
             var customer = instance.Customers.Random(rnd);
-            var route = previous.Routes.Random(rnd);
-            var index = rnd.Next(1, route.Stops.Count - 1);
 
-            if (!previous.TryMove(customer, route, index, out var current))
-                continue;
-
-            if (current.Routes.Count < incumbent.Routes.Count)
+            Solution? current;
+            if (incumbent.Routes.Count >= previous.Routes.Count && rnd.NextDouble() < Math.Max(t, 0.001d))
+                // if (false)
             {
-                // Breakpoint
+                if (!previous.TryRemoveCustomer(customer, out current))
+                    continue;
+            }
+            else
+            {
+                var route = previous.Routes.Random(rnd);
+                var stopIndex = rnd.Next(1, route.Stops.Count - 1);
+
+                if (!previous.TryMove(customer, route, stopIndex, out current))
+                    continue;
             }
 
-            if (current.Distance < incumbent.Distance || current.Routes.Count < incumbent.Routes.Count)
+            if (current.Routes.Count < incumbent.Routes.Count ||
+                current.Routes.Count == incumbent.Routes.Count && current.Distance < incumbent.Distance)
             {
                 yield return incumbent = current;
             }
 
-            var d = Delta(previous, current);
-            var p = Probability(t, d);
-
-            if (rnd.NextDouble() < p)
-            {
-                previous = current;
-            }
-
-            Cool(ref t);
+            previous = current;
         }
-    }
-
-    private static double Delta(Solution previous, Solution current)
-    {
-        var d = (current.Routes.Count - previous.Routes.Count) * 1000
-            + current.Distance - previous.Distance;
-
-        return d;
-    }
-
-    private static void Cool(ref double t)
-    {
-        // t /= (1 + 0.2 * t);
-        t *= 0.9;
-    }
-
-    private static double Probability(double t, double d)
-    {
-        if (d <= 0)
-            return 1;
-
-        return 0;
-
-        // var exp = -d / t;
-        // var p = Math.Exp(exp);
-        // return p;
     }
 }
