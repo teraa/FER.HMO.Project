@@ -7,6 +7,8 @@ public class GraspSolver : ISolver
 {
     public Func<Stop, double> ValueFunc { get; set; } = x => x.ServiceStartedAt;
     public int? Seed { get; set; }
+    public int Iterations { get; set; } = 10;
+    public int MaxRclSize { get; set; } = 10;
 
     public async IAsyncEnumerable<Solution> SolveAsync(Instance instance,
         [EnumeratorCancellation] CancellationToken stoppingToken = default)
@@ -17,9 +19,55 @@ public class GraspSolver : ISolver
             ? new Random()
             : new Random(Seed.Value);
 
-        var solution = Construct(instance, rnd, 10);
+        var incumbent = null as Solution;
+        for (int i = MaxRclSize; i >= 0; i--)
+        {
+            for (int j = 0; j < Iterations; j++)
+            {
+                var current = Construct(instance, rnd, i);
 
-        yield return solution;
+                if (incumbent is null || current < incumbent)
+                {
+                    yield return current;
+                    incumbent = current;
+                }
+            }
+        }
+
+        if (incumbent is null)
+            yield break;
+
+        foreach (var solution in Improve(incumbent, instance, rnd, stoppingToken))
+        {
+            yield return solution;
+        }
+    }
+
+    private static IEnumerable<Solution> Improve(Solution incumbent, Instance instance, Random rnd, CancellationToken stoppingToken)
+    {
+        var previous = incumbent;
+
+        ulong i = 0;
+        ulong j = 0;
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            i++;
+
+            var customer = instance.Customers.Random(rnd);
+            var route = previous.Routes.Random(rnd);
+            var index = rnd.Next(1, route.Stops.Count - 1);
+
+            if (!previous.TryMove(customer, route, index, out var current))
+                continue;
+
+            if (current < incumbent)
+            {
+                j = i;
+                yield return incumbent = current;
+            }
+
+            previous = current;
+        }
     }
 
     private Solution Construct(Instance instance, Random rnd, int rclSize)
