@@ -47,13 +47,13 @@ public class Solution
     public override string ToString()
     {
         var sb = new StringBuilder();
-        sb.AppendLine(_routes.Count.ToString());
+        sb.Append(_routes.Count + "\n");
 
         int i = 0;
         foreach (var route in _routes)
-            sb.AppendLine($"{++i}: {route}");
+            sb.Append($"{++i}: {route}\n");
 
-        sb.AppendLine(Distance.ToString("F"));
+        sb.Append(Distance.ToString("F") + "\n");
 
         return sb.ToString();
     }
