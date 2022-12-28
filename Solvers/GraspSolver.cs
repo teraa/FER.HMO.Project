@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Solvers.Types;
 
@@ -26,11 +27,11 @@ public class GraspSolver : ISolver
             {
                 var current = Construct(instance, rnd, i);
 
-                if (incumbent is null || current < incumbent)
-                {
-                    yield return current;
-                    incumbent = current;
-                }
+                if (incumbent is { } && current >= incumbent)
+                    continue;
+
+                yield return current;
+                incumbent = current;
             }
         }
 
@@ -43,13 +44,14 @@ public class GraspSolver : ISolver
         }
     }
 
-    private static IEnumerable<Solution> Improve(Solution incumbent, Instance instance, Random rnd, CancellationToken stoppingToken)
+    private static IEnumerable<Solution> Improve(Solution incumbent, Instance instance, Random rnd,
+        CancellationToken cancellationToken)
     {
         var previous = incumbent;
 
         ulong i = 0;
         ulong j = 0;
-        while (!stoppingToken.IsCancellationRequested)
+        while (!cancellationToken.IsCancellationRequested)
         {
             i++;
 
@@ -63,6 +65,7 @@ public class GraspSolver : ISolver
             if (current < incumbent)
             {
                 j = i;
+                Debug.WriteLine($"[SOLVER] Improved at {j}");
                 yield return incumbent = current;
             }
 
