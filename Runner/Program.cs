@@ -5,19 +5,13 @@ using Timer = System.Timers.Timer;
 
 // ReSharper disable AccessToModifiedClosure
 
-const string inFile = "../instances/i1.txt";
+// const string inFile = "../instances/i2.txt";
+string inFile = args[0];
 const string outDir = "../out/";
 Directory.CreateDirectory(outDir);
 var instance = InstanceLoader.LoadFromFile(inFile);
 var solver = new GraspSolver();
 var incumbent = null as Solution;
-var cts = new CancellationTokenSource();
-
-Console.CancelKeyPress += (_, e) =>
-{
-    e.Cancel = true;
-    cts.Cancel();
-};
 
 foreach (var time in new[] {1, 5})
 {
@@ -30,7 +24,19 @@ foreach (var time in new[] {1, 5})
 }
 
 int i = 0;
+var cts = new CancellationTokenSource();
 var sw = Stopwatch.StartNew();
+
+Console.CancelKeyPress += (_, e) =>
+{
+    e.Cancel = true;
+
+    if (e.SpecialKey == ConsoleSpecialKey.ControlC)
+        cts.Cancel();
+    else
+        Console.WriteLine($"\n[{sw.Elapsed:hh\\:mm\\:ss}] Solution {i}:\n{incumbent}\n");
+};
+
 await foreach (var solution in solver.SolveAsync(instance, cts.Token))
 {
     incumbent = solution;
