@@ -70,7 +70,7 @@ public class Solver : ISolver
                     continue;
 
 
-                if (current.Distance < incumbent.Distance || current.Routes.Count < incumbent.Routes.Count)
+                if (current < incumbent)
                 {
                     yield return incumbent = current;
                     tabu.Clear();

@@ -41,7 +41,7 @@ public class LnsSolver : ISolver
                 if (!previous.TryMove(customer, route, index, out var current))
                     continue;
 
-                if (current.Distance < incumbent.Distance || current.Routes.Count < incumbent.Routes.Count)
+                if (current < incumbent)
                 {
                     sw.Restart();
                     yield return incumbent = current;

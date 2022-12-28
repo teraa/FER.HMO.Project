@@ -41,12 +41,12 @@ public class TabuSolver : ISolver
             if (!previous.TryMove(customer, route, index, out var current))
                 continue;
 
-            if (current.Distance < incumbent.Distance || current.Routes.Count < incumbent.Routes.Count)
+            if (current < incumbent)
             {
                 yield return incumbent = current;
             }
 
-            if (current.Distance < previous.Distance || current.Routes.Count < previous.Routes.Count)
+            if (current < previous)
             {
                 _tabu.Enqueue(customer);
 

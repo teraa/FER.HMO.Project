@@ -46,8 +46,7 @@ public class SaSolver : ISolver
                     continue;
             }
 
-            if (current.Routes.Count < incumbent.Routes.Count ||
-                current.Routes.Count == incumbent.Routes.Count && current.Distance < incumbent.Distance)
+            if (current < incumbent)
             {
                 yield return incumbent = current;
             }
