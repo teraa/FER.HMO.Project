@@ -37,6 +37,12 @@ public class Solution
         => left.Routes.Count > right.Routes.Count ||
            left.Routes.Count == right.Routes.Count && left.Distance > right.Distance;
 
+    public static bool operator <=(Solution left, Solution right)
+        => !(left > right);
+
+    public static bool operator >=(Solution left, Solution right)
+        => !(left < right);
+
 
     public override string ToString()
     {
