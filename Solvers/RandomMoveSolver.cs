@@ -30,7 +30,8 @@ public class RandomMoveSolver : ISolver
             if (!previous.TryMove(customer, route, index, out var current))
                 continue;
 
-            if (current.Distance < incumbent.Distance || current.Routes.Count < incumbent.Routes.Count)
+            if (current.Routes.Count < incumbent.Routes.Count ||
+                current.Routes.Count == incumbent.Routes.Count && current.Distance < incumbent.Distance)
             {
                 yield return incumbent = current;
             }
