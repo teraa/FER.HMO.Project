@@ -5,8 +5,8 @@ using Timer = System.Timers.Timer;
 
 // ReSharper disable AccessToModifiedClosure
 
-// const string inFile = "../instances/i2.txt";
-string inFile = args[0];
+const string inFile = "../instances/i1.txt";
+// string inFile = args[0];
 const string outDir = "../out/";
 Directory.CreateDirectory(outDir);
 var instance = InstanceLoader.LoadFromFile(inFile);
@@ -39,6 +39,9 @@ Console.CancelKeyPress += (_, e) =>
 
 await foreach (var solution in solver.SolveAsync(instance, cts.Token))
 {
+    if (incumbent is { } && solution >= incumbent)
+        continue;
+
     incumbent = solution;
     Console.WriteLine($"[{sw.Elapsed:hh\\:mm\\:ss}] Solution {i++}: {solution.Routes.Count}/{solution.Vehicles} ({solution.Distance:F})");
 }
