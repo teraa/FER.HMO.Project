@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Threading.Channels;
 using Solvers.Types;
 
 namespace Solvers;
@@ -11,14 +11,26 @@ public class GraspSolver : ISolver
     public int Iterations { get; set; } = 10;
     public int MaxRclSize { get; set; } = 10;
 
-    public async IAsyncEnumerable<Solution> SolveAsync(Instance instance,
-        [EnumeratorCancellation] CancellationToken stoppingToken = default)
+    public IAsyncEnumerable<Solution> SolveAsync(Instance instance, CancellationToken stoppingToken = default)
     {
-        await Task.Yield();
-
         var rnd = Seed is null
             ? new Random()
             : new Random(Seed.Value);
+
+        var channel = Channel.CreateUnbounded<Solution>(new UnboundedChannelOptions()
+        {
+            SingleReader = true,
+            SingleWriter = false,
+        });
+
+        _ = SolveInternalAsync(instance, rnd, channel.Writer, stoppingToken);
+
+        return channel.Reader.ReadAllAsync(stoppingToken);
+    }
+
+    private async Task SolveInternalAsync(Instance instance, Random rnd, ChannelWriter<Solution> writer, CancellationToken stoppingToken)
+    {
+        await Task.Yield();
 
         var incumbent = null as Solution;
         for (int i = MaxRclSize; i >= 0; i--)
@@ -30,17 +42,32 @@ public class GraspSolver : ISolver
                 if (incumbent is { } && current >= incumbent)
                     continue;
 
-                yield return current;
+                try
+                {
+                    await writer.WriteAsync(current, stoppingToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    return;
+                }
+
                 incumbent = current;
             }
         }
 
         if (incumbent is null)
-            yield break;
+            return;
 
         foreach (var solution in Improve(incumbent, instance, rnd, stoppingToken))
         {
-            yield return solution;
+            try
+            {
+                await writer.WriteAsync(solution, stoppingToken);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
         }
     }
 
