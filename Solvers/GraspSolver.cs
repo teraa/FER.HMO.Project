@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading.Channels;
 using Solvers.Types;
 
@@ -9,9 +10,11 @@ public class GraspSolver : ISolver
     public Func<Stop, double> ValueFunc { get; set; } = x => x.ServiceStartedAt;
     public int? Seed { get; set; }
     public int Iterations { get; set; } = 10;
-    public int MaxRclSize { get; set; } = 10;
+    public int MaxRclSize { get; set; } = 5;
+    public TimeSpan Timeout { get; set; } = TimeSpan.FromMinutes(2);
 
-    public IAsyncEnumerable<Solution> SolveAsync(Instance instance, CancellationToken stoppingToken = default)
+    public async IAsyncEnumerable<Solution> SolveAsync(Instance instance,
+        [EnumeratorCancellation] CancellationToken stoppingToken = default)
     {
         var rnd = Seed is null
             ? new Random()
@@ -23,42 +26,61 @@ public class GraspSolver : ISolver
             SingleWriter = false,
         });
 
-        _ = SolveInternalAsync(instance, rnd, channel.Writer, stoppingToken);
+        for (int i = 0; i <= MaxRclSize; i++)
+        {
+            _ = SolveInternalAsync(instance, rnd, channel.Writer, i, stoppingToken);
+        }
 
-        return channel.Reader.ReadAllAsync(stoppingToken);
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            Solution solution;
+            try
+            {
+                solution = await channel.Reader.ReadAsync(stoppingToken);
+            }
+            catch (OperationCanceledException)
+            {
+                yield break;
+            }
+
+            yield return solution;
+        }
     }
 
-    private async Task SolveInternalAsync(Instance instance, Random rnd, ChannelWriter<Solution> writer, CancellationToken stoppingToken)
+    private async Task SolveInternalAsync(Instance instance, Random rnd, ChannelWriter<Solution> writer, int rlcSize,
+        CancellationToken stoppingToken)
     {
         await Task.Yield();
 
         var incumbent = null as Solution;
-        for (int i = MaxRclSize; i >= 0; i--)
+
+        for (int j = 0; j < Iterations; j++)
         {
-            for (int j = 0; j < Iterations; j++)
+            var current = Construct(instance, rnd, rlcSize);
+
+            if (incumbent is { } && current >= incumbent)
+                continue;
+
+            try
             {
-                var current = Construct(instance, rnd, i);
-
-                if (incumbent is { } && current >= incumbent)
-                    continue;
-
-                try
-                {
-                    await writer.WriteAsync(current, stoppingToken);
-                }
-                catch (OperationCanceledException)
-                {
-                    return;
-                }
-
-                incumbent = current;
+                await writer.WriteAsync(current, stoppingToken);
             }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+
+            incumbent = current;
         }
 
         if (incumbent is null)
             return;
 
-        foreach (var solution in Improve(incumbent, instance, rnd, stoppingToken))
+        TimeSpan? timeout = rlcSize == 0
+            ? null
+            : Timeout;
+
+        foreach (var solution in Improve(incumbent, instance, rnd, timeout, stoppingToken))
         {
             try
             {
@@ -71,14 +93,14 @@ public class GraspSolver : ISolver
         }
     }
 
-    private static IEnumerable<Solution> Improve(Solution incumbent, Instance instance, Random rnd,
-        CancellationToken cancellationToken)
+    private IEnumerable<Solution> Improve(Solution incumbent, Instance instance, Random rnd, TimeSpan? timeout, CancellationToken cancellationToken)
     {
+        var sw = Stopwatch.StartNew();
         var previous = incumbent;
 
         ulong i = 0;
         ulong j = 0;
-        while (!cancellationToken.IsCancellationRequested)
+        while (!cancellationToken.IsCancellationRequested && (timeout is null || sw.Elapsed < timeout))
         {
             i++;
 
@@ -92,6 +114,7 @@ public class GraspSolver : ISolver
             if (current < incumbent)
             {
                 j = i;
+                sw.Restart();
                 Debug.WriteLine($"[SOLVER] Improved at {j}");
                 yield return incumbent = current;
             }
