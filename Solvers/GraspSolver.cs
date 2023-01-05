@@ -54,7 +54,7 @@ public class GraspSolver : ISolver
 
         var incumbent = null as Solution;
 
-        for (int j = 0; j < Iterations; j++)
+        for (int i = 0; i < Iterations; i++)
         {
             var current = Construct(instance, rnd, rlcSize);
 
