@@ -4,7 +4,7 @@ using Solvers.Types;
 
 namespace Solvers;
 
-public class Solver : ISolver
+public class Tabu2Solver : ISolver
 {
     public int? Seed { get; set; }
     public ISolver InitialSolver { get; set; } = new GreedySolver();
