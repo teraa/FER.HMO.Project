@@ -34,7 +34,7 @@ Console.CancelKeyPress += (_, e) =>
     if (e.SpecialKey == ConsoleSpecialKey.ControlC)
         cts.Cancel();
     else
-        Console.WriteLine($"\n[{sw.Elapsed:hh\\:mm\\:ss}] Solution {i}:\n{incumbent}\n");
+        Console.WriteLine($"\n[{sw.Elapsed:hh\\:mm\\:ss}] Solution {i} ({solver.Iteration}):\n{incumbent}\n");
 };
 
 await foreach (var solution in solver.SolveAsync(instance, cts.Token))
@@ -43,7 +43,7 @@ await foreach (var solution in solver.SolveAsync(instance, cts.Token))
         continue;
 
     incumbent = solution;
-    Console.WriteLine($"[{sw.Elapsed:hh\\:mm\\:ss}] Solution {i++}: {solution.Routes.Count}/{solution.Vehicles} ({solution.Distance:F})");
+    Console.WriteLine($"[{sw.Elapsed:hh\\:mm\\:ss}] Solution {i++} ({solver.Iteration}): {solution.Routes.Count}/{solution.Vehicles} ({solution.Distance:F})");
 }
 
 WriteToFile("un", incumbent!);
@@ -51,5 +51,5 @@ WriteToFile("un", incumbent!);
 void WriteToFile(string name, Solution solution)
 {
     var outFile = Path.Combine(outDir, $"res-{name}-{Path.GetFileName(inFile)}");
-    File.WriteAllText(outFile, solution.ToString());
+    File.WriteAllText(outFile, solution.ToString() + "\n" + solver.Iteration);
 }

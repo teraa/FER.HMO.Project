@@ -7,15 +7,19 @@ namespace Solvers;
 
 public class GraspSolver : ISolver
 {
+    private ulong _iteration;
+
     public Func<Stop, double> ValueFunc { get; set; } = x => x.ServiceStartedAt;
     public int? Seed { get; set; }
     public int Iterations { get; set; } = 10;
     public int MaxRclSize { get; set; } = 5;
     public TimeSpan Timeout { get; set; } = TimeSpan.FromMinutes(2);
+    public ulong Iteration => Interlocked.Read(ref _iteration);
 
     public async IAsyncEnumerable<Solution> SolveAsync(Instance instance,
         [EnumeratorCancellation] CancellationToken stoppingToken = default)
     {
+        _iteration = 0;
         var rnd = Seed is null
             ? new Random()
             : new Random(Seed.Value);
@@ -120,6 +124,7 @@ public class GraspSolver : ISolver
             }
 
             previous = current;
+            Interlocked.Increment(ref _iteration);
         }
     }
 
