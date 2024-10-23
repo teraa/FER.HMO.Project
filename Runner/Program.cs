@@ -5,8 +5,8 @@ using Timer = System.Timers.Timer;
 
 // ReSharper disable AccessToModifiedClosure
 
-const string inFile = "../instances/i1.txt";
-// string inFile = args[0];
+// const string inFile = "../instances/i1.txt";
+string inFile = args[0];
 const string outDir = "../solutions/";
 Directory.CreateDirectory(outDir);
 var instance = InstanceLoader.LoadFromFile(inFile);
